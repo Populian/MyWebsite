@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Works — Populian Faming Qin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/works.html" class="active">Works</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/research.html">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <p class="section-label">Compositions</p>
+    <h1 class="section-title">Works</h1>
+    <p class="section-desc">Electroacoustic compositions, interactive systems, and sound design works.</p>
+  </div>
+
+  <div class="section section-after-header">
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-cat="all">All</button>
+    </div>
+    <div class="card-grid" id="worksGrid">
+      <div class="loading">Loading works</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="workModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let allWorks = [];
+
+    function getYouTubeEmbedUrl(url) {
+      if (!url) return null;
+      let id = null;
+      try {
+        const u = new URL(url);
+        if (u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
+        else if (u.hostname.includes('youtube.com')) id = u.searchParams.get('v');
+      } catch { return null; }
+      return id ? 'https://www.youtube.com/embed/' + id : null;
+    }
+
+    /** Unify Netlify/Drizzle camelCase and legacy JSON snake_case for the templates below. */
+    function normalizeWork(w, index) {
+      const id = w.id != null && w.id !== '' ? Number(w.id) : index;
+      return {
+        ...w,
+        id,
+        cover_image: w.cover_image ?? w.coverImage ?? '',
+        youtube_url: w.youtube_url ?? w.youtubeUrl ?? '',
+        soundcloud_url: w.soundcloud_url ?? w.soundcloudUrl ?? '',
+        score_pdf_url: w.score_pdf_url ?? w.scorePdfUrl ?? '',
+        audio_url: w.audio_url ?? w.audioUrl ?? (w.audio || ''),
+        program_note: w.program_note ?? w.programNote ?? '',
+        premiere_info: w.premiere_info ?? w.premiereInfo ?? '',
+        festival_selections: w.festival_selections ?? w.festivalSelections ?? '',
+        year: w.year != null && w.year !== '' ? Number(w.year) : undefined,
+        featured: Boolean(w.featured),
+      };
+    }
+
+    function renderWorks(filter) {
+      const grid = document.getElementById('worksGrid');
+      const filtered = filter === 'all' ? allWorks : allWorks.filter(w => w.category === filter);
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p class="empty-state">No works found in this category.</p>';
+        return;
+      }
+      grid.innerHTML = filtered.map((w, i) => `
+        <div class="card" style="cursor:pointer" onclick="openModal(${w.id})">
+          ${w.cover_image ? `<img class="card-image" src="${w.cover_image}" alt="${w.title}">` : ''}
+          ${w.featured ? '<span class="card-featured-badge">Featured</span>' : ''}
+          <p class="card-category">${w.category || ''}</p>
+          <h3 class="card-title">${w.title}${w.year ? ` (${w.year})` : ''}</h3>
+          <p class="card-desc">${w.description || ''}</p>
+          ${w.medium ? `<p class="card-meta">${w.medium}</p>` : ''}
+          <div class="card-actions">
+            ${w.youtube_url ? '<span class="card-link">Video</span>' : ''}
+            ${w.soundcloud_url ? '<span class="card-link">Audio</span>' : ''}
+            ${w.score_pdf_url ? '<span class="card-link">Score</span>' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openModal(id) {
+      const w = allWorks.find(x => Number(x.id) === Number(id));
+      if (!w) return;
+      const embedUrl = getYouTubeEmbedUrl(w.youtube_url);
+      document.getElementById('modalBody').innerHTML = `
+        ${w.cover_image ? `<img style="width:100%;border-radius:6px;margin-bottom:24px;" src="${w.cover_image}" alt="${w.title}">` : ''}
+        <p class="card-category">${w.category || ''}</p>
+        <h2 style="font-size:2rem;margin-bottom:4px;">${w.title}</h2>
+        ${w.year ? `<p class="card-year">${w.year}</p>` : ''}
+        ${w.medium ? `<p class="card-meta" style="margin-top:12px;">${w.medium}</p>` : ''}
+        <p style="margin-top:16px;font-size:0.92rem;color:var(--text-secondary);line-height:1.8;">${w.description || ''}</p>
+        ${w.program_note ? `<div style="margin-top:20px;"><p class="section-label">Program Note</p><p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;font-style:italic;">${w.program_note}</p></div>` : ''}
+        ${w.premiere_info ? `<div style="margin-top:16px;"><p class="section-label">Premiere</p><p style="font-size:0.88rem;color:var(--text-secondary);">${w.premiere_info}</p></div>` : ''}
+        ${w.festival_selections ? `<div style="margin-top:16px;"><p class="section-label">Festivals &amp; Selections</p><p style="font-size:0.88rem;color:var(--text-secondary);">${w.festival_selections}</p></div>` : ''}
+        ${embedUrl ? `<div class="video-embed" style="margin-top:24px;"><iframe src="${embedUrl}" allowfullscreen></iframe></div>` : ''}
+        ${w.soundcloud_url ? `<div style="margin-top:16px;"><a href="${w.soundcloud_url}" target="_blank" class="btn btn-sm">Listen on SoundCloud</a></div>` : ''}
+        ${w.audio_url ? `<div style="margin-top:16px;"><audio controls style="width:100%;"><source src="${w.audio_url}"></audio></div>` : ''}
+        <div class="card-actions" style="margin-top:24px;">
+          ${w.score_pdf_url ? `<a href="${w.score_pdf_url}" target="_blank" class="btn btn-sm">View Score</a>` : ''}
+        </div>
+      `;
+      document.getElementById('workModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('workModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('workModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    async function loadWorks() {
+      try {
+        const res = await fetch('/api/works');
+        const raw = await res.json();
+        allWorks = (Array.isArray(raw) ? raw : []).map((w, i) => normalizeWork(w, i));
+
+        const categories = [...new Set(allWorks.map(w => w.category).filter(Boolean))];
+        const filterBar = document.getElementById('filterBar');
+        categories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.dataset.cat = cat;
+          btn.textContent = cat;
+          btn.onclick = () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderWorks(cat);
+          };
+          filterBar.appendChild(btn);
+        });
+
+        document.querySelector('[data-cat="all"]').onclick = () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('[data-cat="all"]').classList.add('active');
+          renderWorks('all');
+        };
+
+        renderWorks('all');
+      } catch (e) {
+        console.error('Failed to load works:', e);
+        document.getElementById('worksGrid').innerHTML = '<p class="empty-state">No works available yet.</p>';
+      }
+    }
+    loadWorks();
+  </script>
+</body>
+</html>

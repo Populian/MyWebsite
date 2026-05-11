@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Populian Faming Qin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/works.html">Works</a>
+        <a href="/portfolio.html" class="active">Portfolio</a>
+        <a href="/research.html">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <p class="section-label">Gallery</p>
+    <h1 class="section-title">Portfolio</h1>
+    <p class="section-desc">Concert photography, project documentation, and visual materials.</p>
+  </div>
+
+  <div class="section section-after-header">
+    <div class="filter-bar" id="mediaFilter">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="portrait">Portraits</button>
+      <button class="filter-btn" data-cat="concert">Concerts</button>
+      <button class="filter-btn" data-cat="project">Projects</button>
+      <button class="filter-btn" data-cat="score">Scores</button>
+    </div>
+    <div class="gallery-grid" id="gallery">
+      <div class="loading">Loading gallery</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="lightbox">
+    <div style="max-width:90vw;max-height:90vh;position:relative;">
+      <button class="modal-close" onclick="closeLightbox()" style="position:fixed;top:20px;right:20px;z-index:10;">&times;</button>
+      <img id="lightboxImg" style="max-width:90vw;max-height:85vh;object-fit:contain;border-radius:8px;">
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let allMedia = [];
+    function renderGallery(cat) {
+      const grid = document.getElementById('gallery');
+      const filtered = cat === 'all' ? allMedia : allMedia.filter(m => m.category === cat);
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p class="empty-state">No images in this category. Upload photos in the <a href="/admin.html">admin dashboard</a>.</p>';
+        return;
+      }
+      grid.innerHTML = filtered.map(m => `
+        <div class="gallery-item" onclick="openLightbox('${m.url}')">
+          <img src="${m.url}" alt="${m.originalName || ''}" loading="lazy">
+        </div>
+      `).join('');
+    }
+
+    function openLightbox(url) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+      if (e.target === this) closeLightbox();
+    });
+
+    document.querySelectorAll('#mediaFilter .filter-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('#mediaFilter .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderGallery(btn.dataset.cat);
+      };
+    });
+
+    async function loadGallery() {
+      try {
+        const res = await fetch('/api/media');
+        allMedia = await res.json();
+        renderGallery('all');
+      } catch (e) {
+        console.error('Failed to load gallery:', e);
+        document.getElementById('gallery').innerHTML = '<p class="empty-state">Gallery is empty. Upload images in the <a href="/admin.html">admin dashboard</a>.</p>';
+      }
+    }
+    loadGallery();
+  </script>
+</body>
+</html>

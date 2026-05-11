@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Populian Faming Qin</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#f5f5f7;--bg2:#fff;--bg3:#fafafa;--bg4:#f0f0f2;
+      --accent:#0071e3;--accent-dim:rgba(0,113,227,.12);
+      --text:#1d1d1f;--text2:#6e6e73;--text3:#86868b;
+      --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.12);
+      --red:#d70015;--green:#248a3d;--radius:10px;
+      --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif
+    }
+    body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{color:#0077ed}
+    .admin-layout{display:flex;min-height:100vh}
+    .admin-sidebar{width:220px;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-right:1px solid var(--border);padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+    .admin-sidebar h2{padding:0 20px;font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text)}
+    .admin-sidebar .subtitle{padding:0 20px;font-size:11px;color:var(--text3);margin-bottom:24px}
+    .admin-nav{display:flex;flex-direction:column}
+    .admin-nav a{display:block;padding:10px 20px;font-size:13px;color:var(--text2);transition:background .2s,color .2s;border-left:3px solid transparent}
+    .admin-nav a:hover{background:rgba(0,0,0,.04);color:var(--text)}
+    .admin-nav a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,113,227,.06)}
+    .admin-nav .sep{height:1px;background:var(--border);margin:12px 20px}
+    .admin-main{flex:1;margin-left:220px;padding:32px;max-width:900px}
+    .admin-main h1{font-size:22px;font-weight:600;margin-bottom:24px;letter-spacing:-.02em}
+    .admin-section{display:none}
+    .admin-section.active{display:block}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+    .form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;transition:border-color .2s,box-shadow .2s}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+    .form-group textarea{min-height:80px;resize:vertical}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-check{display:flex;align-items:center;gap:8px}
+    .form-check input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);color:var(--text);transition:background .2s,border-color .2s,transform .2s}
+    .btn:hover{background:var(--bg4);border-color:rgba(0,0,0,.18)}
+    .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn-accent:hover{background:#0077ed;border-color:#0077ed}
+    .btn-danger{border-color:rgba(215,0,21,.35);color:var(--red)}
+    .btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
+    .btn-sm{padding:6px 14px;font-size:12px}
+    .btn-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .data-table{width:100%;border-collapse:collapse;margin-top:16px;background:var(--bg2);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+    .data-table th,.data-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+    .data-table th{color:var(--text2);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em;background:var(--bg3)}
+    .data-table tr:hover{background:rgba(0,0,0,.02)}
+    .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+    .badge-accent{background:var(--accent-dim);color:var(--accent)}
+    .badge-green{background:rgba(36,138,61,.12);color:var(--green)}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:13px;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.success{border-color:rgba(36,138,61,.4);color:var(--green)}
+    .toast.error{border-color:rgba(215,0,21,.35);color:var(--red)}
+    .upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;background:var(--bg2)}
+    .upload-zone:hover{border-color:var(--accent-dim);background:rgba(0,113,227,.04)}
+    .upload-zone input{display:none}
+    .upload-zone p{font-size:13px;color:var(--text2)}
+    .upload-zone strong{color:var(--accent)}
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:16px}
+    .media-item{position:relative;aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);cursor:pointer}
+    .media-item img{width:100%;height:100%;object-fit:cover}
+    .media-item .del{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+    .media-item:hover .del{opacity:1}
+    .url-display{font-size:12px;color:var(--text3);word-break:break-all;margin-top:4px;padding:6px 8px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
+    .stat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+    .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+    .stat-card .num{font-size:28px;font-weight:600;color:var(--accent);letter-spacing:-.02em}
+    .stat-card .lbl{font-size:12px;color:var(--text2);margin-top:4px}
+    #workFormWrap,#eventFormWrap{background:var(--bg2)!important;border:1px solid var(--border)!important}
+    @media(max-width:768px){.admin-sidebar{display:none}.admin-main{margin-left:0}}
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h2>Admin</h2>
+      <p class="subtitle">Populian Faming Qin</p>
+      <nav class="admin-nav">
+        <a href="#" data-section="dashboard" class="active">Dashboard</a>
+        <a href="#" data-section="works">Works Manager</a>
+        <a href="#" data-section="media">Media Manager</a>
+        <div class="sep"></div>
+        <a href="#" data-section="home-editor">Home Page</a>
+        <a href="#" data-section="about-editor">About Page</a>
+        <a href="#" data-section="schedule">Schedule</a>
+        <a href="#" data-section="contact-editor">Contact / Press</a>
+        <div class="sep"></div>
+        <a href="/home.html" style="color:var(--text3)">View Site &rarr;</a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- DASHBOARD -->
+      <div id="sec-dashboard" class="admin-section active">
+        <h1>Dashboard</h1>
+        <div class="stat-cards" id="stats"></div>
+        <div class="btn-group">
+          <button class="btn btn-accent" onclick="seedData()">Seed Initial Data</button>
+          <a href="/home.html" class="btn">View Public Site</a>
+        </div>
+      </div>
+
+      <!-- WORKS -->
+      <div id="sec-works" class="admin-section">
+        <h1>Works Manager</h1>
+        <button class="btn btn-accent" onclick="showWorkForm()">+ Add New Work</button>
+        <div id="workFormWrap" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+          <h3 style="margin-bottom:16px;font-size:16px;" id="workFormTitle">Add New Work</h3>
+          <form id="workForm" onsubmit="return saveWork(event)">
+            <input type="hidden" id="wk-id">
+            <div class="form-row">
+              <div class="form-group"><label>Title *</label><input id="wk-title" required></div>
+              <div class="form-group"><label>Year</label><input id="wk-year" type="number" min="1900" max="2100"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Category</label><input id="wk-category" placeholder="e.g. Electroacoustic, Interactive Systems"></div>
+              <div class="form-group"><label>Medium / Instrumentation</label><input id="wk-medium" placeholder="e.g. Fixed media, Interactive electronics"></div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea id="wk-description"></textarea></div>
+            <div class="form-group"><label>Program Note</label><textarea id="wk-programNote"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>Premiere Info</label><input id="wk-premiereInfo"></div>
+              <div class="form-group"><label>Festival Selections</label><input id="wk-festivalSelections"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>YouTube URL</label><input id="wk-youtubeUrl" type="url" placeholder="https://youtube.com/watch?v=..."></div>
+              <div class="form-group"><label>SoundCloud URL</label><input id="wk-soundcloudUrl" type="url"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Audio File URL</label><input id="wk-audioUrl" type="url"></div>
+              <div class="form-group"><label>Score PDF URL</label><input id="wk-scorePdfUrl" type="url"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Cover Image URL</label><input id="wk-coverImage" placeholder="Upload in Media Manager, paste URL here"></div>
+              <div class="form-group"><label>Tags (comma-separated)</label><input id="wk-tags" placeholder="e.g. electronic, interactive, dance"></div>
+            </div>
+            <div class="form-check" style="margin-bottom:16px;">
+              <input type="checkbox" id="wk-featured"><label for="wk-featured" style="text-transform:none;font-size:13px;color:var(--text)">Featured work</label>
+            </div>
+            <div class="btn-group">
+              <button type="submit" class="btn btn-accent">Save Work</button>
+              <button type="button" class="btn" onclick="hideWorkForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <table class="data-table" id="worksTable">
+          <thead><tr><th>Title</th><th>Year</th><th>Category</th><th>Featured</th><th>Actions</th></tr></thead>
+          <tbody id="worksBody"></tbody>
+        </table>
+      </div>
+
+      <!-- MEDIA -->
+      <div id="sec-media" class="admin-section">
+        <h1>Media Manager</h1>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="uploadCat">
+            <option value="general">General</option>
+            <option value="portrait">Portrait</option>
+            <option value="concert">Concert</option>
+            <option value="project">Project</option>
+            <option value="score">Score Preview</option>
+          </select>
+        </div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
+          <p>Click to upload or drag files here<br><strong>JPG, PNG, WebP</strong> — max 10MB</p>
+        </div>
+        <div id="uploadStatus" style="margin-bottom:12px;font-size:13px;color:var(--text2)"></div>
+        <div class="media-grid" id="mediaGrid"></div>
+      </div>
+
+      <!-- HOME EDITOR -->
+      <div id="sec-home-editor" class="admin-section">
+        <h1>Home Page Editor</h1>
+        <form onsubmit="return saveHome(event)">
+          <div class="form-row">
+            <div class="form-group"><label>Display Name</label><input id="he-displayName"></div>
+            <div class="form-group"><label>Artist Alias</label><input id="he-alias"></div>
+          </div>
+          <div class="form-group"><label>Subtitle</label><input id="he-subtitle"></div>
+          <div class="form-group"><label>Artist Statement</label><textarea id="he-statement"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Hero Image URL</label><input id="he-heroImage"></div>
+            <div class="form-group"><label>Portrait Image URL</label><input id="he-portraitImage"></div>
+          </div>
+          <div class="btn-group"><button type="submit" class="btn btn-accent">Save Home Page</button></div>
+        </form>
+      </div>
+
+      <!-- ABOUT EDITOR -->
+      <div id="sec-about-editor" class="admin-section">
+        <h1>About Page Editor</h1>
+        <form onsubmit="return saveAbout(event)">
+          <div class="form-group"><label>Biography</label><textarea id="ab-biography" style="min-height:120px"></textarea></div>
+          <div class="form-group"><label>Artistic Statement</label><textarea id="ab-artisticStatement"></textarea></div>
+          <div class="form-group"><label>Alias Explanation</label><textarea id="ab-aliasExplanation"></textarea></div>
+          <div class="form-group"><label>Education (JSON array)</label><textarea id="ab-education" style="min-height:100px" placeholder='[{"institution":"...","degree":"...","years":"..."}]'></textarea></div>
+          <div class="form-group"><label>Skills (comma-separated)</label><textarea id="ab-skills" placeholder="Max/MSP, Ableton Live, Kyma, ..."></textarea></div>
+          <div class="form-group"><label>Awards (one per line)</label><textarea id="ab-awards" style="min-height:120px"></textarea></div>
+          <div class="form-group"><label>Research Interests (one per line)</label><textarea id="ab-researchInterests" style="min-height:100px" placeholder="Title | Short explanation for Research page cards&#10;Electroacoustic Music | Focus on live electronics and spatial sound"></textarea><p style="font-size:12px;color:var(--text2);margin:6px 0 0;">Each line: <code>Title | explanation</code>. Omit <code>|</code> for a title only (Research page uses a default blurb for that row).</p></div>
+          <div class="btn-group"><button type="submit" class="btn btn-accent">Save About Page</button></div>
+        </form>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div id="sec-schedule" class="admin-section">
+        <h1>Schedule Manager</h1>
+        <button class="btn btn-accent" onclick="showEventForm()">+ Add Event</button>
+        <div id="eventFormWrap" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+          <h3 style="margin-bottom:16px;font-size:16px;" id="eventFormTitle">Add Event</h3>
+          <form id="eventForm" onsubmit="return saveEvent(event)">
+            <input type="hidden" id="ev-id">
+            <div class="form-row">
+              <div class="form-group"><label>Date *</label><input id="ev-date" type="date" required></div>
+              <div class="form-group"><label>Event Title *</label><input id="ev-title" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Venue</label><input id="ev-venue"></div>
+              <div class="form-group"><label>City / Country</label><input id="ev-cityCountry"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Work Performed</label><input id="ev-workPerformed"></div>
+              <div class="form-group"><label>Event Link</label><input id="ev-link" type="url"></div>
+            </div>
+            <div class="btn-group">
+              <button type="submit" class="btn btn-accent">Save Event</button>
+              <button type="button" class="btn" onclick="hideEventForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Event</th><th>Venue</th><th>Location</th><th>Actions</th></tr></thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+      </div>
+
+      <!-- CONTACT EDITOR -->
+      <div id="sec-contact-editor" class="admin-section">
+        <h1>Contact / Press Kit Editor</h1>
+        <form onsubmit="return saveContact(event)">
+          <div class="form-row">
+            <div class="form-group"><label>Display Name</label><input id="ct-displayName"></div>
+            <div class="form-group"><label>Artist Alias</label><input id="ct-alias"></div>
+          </div>
+          <div class="form-group"><label>Email</label><input id="ct-email" type="email"></div>
+          <h3 style="font-size:14px;color:var(--text2);margin:20px 0 12px;">Social Links</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Instagram URL</label><input id="ct-instagram"></div>
+            <div class="form-group"><label>SoundCloud URL</label><input id="ct-soundcloud"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>YouTube URL</label><input id="ct-youtube"></div>
+            <div class="form-group"><label>GitHub URL</label><input id="ct-github"></div>
+          </div>
+          <h3 style="font-size:14px;color:var(--text2);margin:20px 0 12px;">Press Kit</h3>
+          <div class="form-group"><label>CV PDF URL</label><input id="ct-cvPdfUrl"></div>
+          <div class="form-group"><label>Press Photo URL</label><input id="ct-pressPhotoUrl"></div>
+          <div class="form-group"><label>Short Bio</label><textarea id="ct-shortBio"></textarea></div>
+          <div class="form-group"><label>Long Bio</label><textarea id="ct-longBio" style="min-height:120px"></textarea></div>
+          <div class="btn-group"><button type="submit" class="btn btn-accent">Save Contact Info</button></div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let siteData = {};
+    let worksData = [];
+    let mediaData = [];
+    let scheduleData = [];
+
+    // NAV
+    document.querySelectorAll('.admin-nav a[data-section]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelectorAll('.admin-nav a').forEach(n => n.classList.remove('active'));
+        a.classList.add('active');
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('sec-' + a.dataset.section).classList.add('active');
+      });
+    });
+
+    // TOAST
+    function toast(msg, type) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show ' + (type || '');
+      setTimeout(() => el.className = 'toast', 3000);
+    }
+
+    // SEED
+    async function seedData() {
+      try {
+        const res = await fetch('/api/seed', { method: 'POST' });
+        const data = await res.json();
+        if (data.seeded) {
+          toast('Initial data seeded successfully!', 'success');
+          loadAll();
+        } else {
+          toast(data.message || 'Data already exists', '');
+        }
+      } catch (e) { toast('Seed failed: ' + e.message, 'error'); }
+    }
+
+    // LOAD ALL
+    async function loadAll() {
+      try {
+        const [siteRes, worksRes, mediaRes, schedRes] = await Promise.all([
+          fetch('/api/site'), fetch('/api/works'), fetch('/api/media'), fetch('/api/schedule')
+        ]);
+        siteData = await siteRes.json();
+        worksData = await worksRes.json();
+        mediaData = await mediaRes.json();
+        scheduleData = await schedRes.json();
+      } catch (e) { console.error(e); }
+      renderStats();
+      renderWorks();
+      renderMedia();
+      renderEvents();
+      populateHomeEditor();
+      populateAboutEditor();
+      populateContactEditor();
+    }
+
+    // STATS
+    function renderStats() {
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-card"><div class="num">${worksData.length}</div><div class="lbl">Works</div></div>
+        <div class="stat-card"><div class="num">${worksData.filter(w=>w.featured).length}</div><div class="lbl">Featured</div></div>
+        <div class="stat-card"><div class="num">${mediaData.length}</div><div class="lbl">Media Files</div></div>
+        <div class="stat-card"><div class="num">${scheduleData.length}</div><div class="lbl">Events</div></div>
+      `;
+    }
+
+    // === WORKS ===
+    function renderWorks() {
+      const tbody = document.getElementById('worksBody');
+      tbody.innerHTML = worksData.map(w => `
+        <tr>
+          <td><strong>${w.title}</strong>${w.medium ? '<br><span style="font-size:11px;color:var(--text3)">'+w.medium+'</span>' : ''}</td>
+          <td>${w.year || ''}</td>
+          <td>${w.category || ''}</td>
+          <td>${w.featured ? '<span class="badge badge-accent">Featured</span>' : ''}</td>
+          <td>
+            <button class="btn btn-sm" onclick="editWork(${w.id})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteWork(${w.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showWorkForm(work) {
+      document.getElementById('workFormWrap').style.display = 'block';
+      document.getElementById('workFormTitle').textContent = work ? 'Edit Work' : 'Add New Work';
+      document.getElementById('wk-id').value = work ? work.id : '';
+      document.getElementById('wk-title').value = work ? work.title : '';
+      document.getElementById('wk-year').value = work ? (work.year || '') : '';
+      document.getElementById('wk-category').value = work ? (work.category || '') : '';
+      document.getElementById('wk-medium').value = work ? (work.medium || '') : '';
+      document.getElementById('wk-description').value = work ? (work.description || '') : '';
+      document.getElementById('wk-programNote').value = work ? (work.program_note || '') : '';
+      document.getElementById('wk-premiereInfo').value = work ? (work.premiere_info || '') : '';
+      document.getElementById('wk-festivalSelections').value = work ? (work.festival_selections || '') : '';
+      document.getElementById('wk-youtubeUrl').value = work ? (work.youtube_url || '') : '';
+      document.getElementById('wk-soundcloudUrl').value = work ? (work.soundcloud_url || '') : '';
+      document.getElementById('wk-audioUrl').value = work ? (work.audio_url || '') : '';
+      document.getElementById('wk-scorePdfUrl').value = work ? (work.score_pdf_url || '') : '';
+      document.getElementById('wk-coverImage').value = work ? (work.cover_image || '') : '';
+      const tags = work ? (typeof work.tags === 'string' ? JSON.parse(work.tags || '[]') : (work.tags || [])) : [];
+      document.getElementById('wk-tags').value = tags.join(', ');
+      document.getElementById('wk-featured').checked = work ? work.featured : false;
+    }
+
+    function hideWorkForm() {
+      document.getElementById('workFormWrap').style.display = 'none';
+      document.getElementById('workForm').reset();
+      document.getElementById('wk-id').value = '';
+    }
+
+    function editWork(id) {
+      const w = worksData.find(x => x.id === id);
+      if (w) showWorkForm(w);
+    }
+
+    async function saveWork(e) {
+      e.preventDefault();
+      const id = document.getElementById('wk-id').value;
+      const body = {
+        title: document.getElementById('wk-title').value,
+        year: document.getElementById('wk-year').value,
+        category: document.getElementById('wk-category').value,
+        medium: document.getElementById('wk-medium').value,
+        description: document.getElementById('wk-description').value,
+        programNote: document.getElementById('wk-programNote').value,
+        premiereInfo: document.getElementById('wk-premiereInfo').value,
+        festivalSelections: document.getElementById('wk-festivalSelections').value,
+        youtubeUrl: document.getElementById('wk-youtubeUrl').value,
+        soundcloudUrl: document.getElementById('wk-soundcloudUrl').value,
+        audioUrl: document.getElementById('wk-audioUrl').value,
+        scorePdfUrl: document.getElementById('wk-scorePdfUrl').value,
+        coverImage: document.getElementById('wk-coverImage').value,
+        tags: document.getElementById('wk-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+        featured: document.getElementById('wk-featured').checked,
+      };
+      try {
+        const url = id ? '/api/works/' + id : '/api/works';
+        const method = id ? 'PUT' : 'POST';
+        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        toast('Work saved!', 'success');
+        hideWorkForm();
+        const res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+      return false;
+    }
+
+    async function deleteWork(id) {
+      if (!confirm('Delete this work?')) return;
+      try {
+        await fetch('/api/works/' + id, { method: 'DELETE' });
+        toast('Work deleted', 'success');
+        const res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // === MEDIA ===
+    function renderMedia() {
+      const grid = document.getElementById('mediaGrid');
+      grid.innerHTML = mediaData.map(m => `
+        <div class="media-item" title="${m.originalName || m.key}">
+          <img src="${m.url}" alt="${m.originalName || ''}">
+          <button class="del" onclick="event.stopPropagation();deleteMedia('${m.key}')">&times;</button>
+        </div>
+      `).join('');
+      if (mediaData.length === 0) grid.innerHTML = '<p style="color:var(--text3);font-size:13px;">No media uploaded yet.</p>';
+    }
+
+    document.getElementById('fileInput').addEventListener('change', async function() {
+      const files = this.files;
+      const cat = document.getElementById('uploadCat').value;
+      const status = document.getElementById('uploadStatus');
+      for (let i = 0; i < files.length; i++) {
+        status.textContent = `Uploading ${i + 1} of ${files.length}...`;
+        const fd = new FormData();
+        fd.append('file', files[i]);
+        fd.append('category', cat);
+        try {
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.path) toast('Uploaded: ' + data.path, 'success');
+        } catch (e) { toast('Upload failed', 'error'); }
+      }
+      status.textContent = 'Upload complete!';
+      const res = await fetch('/api/media'); mediaData = await res.json(); renderMedia(); renderStats();
+      this.value = '';
+    });
+
+    async function deleteMedia(key) {
+      if (!confirm('Delete this image?')) return;
+      try {
+        await fetch('/api/media?key=' + encodeURIComponent(key), { method: 'DELETE' });
+        toast('Deleted', 'success');
+        const res = await fetch('/api/media'); mediaData = await res.json(); renderMedia(); renderStats();
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // === HOME EDITOR ===
+    function populateHomeEditor() {
+      const h = siteData.hero || {};
+      document.getElementById('he-displayName').value = h.displayName || '';
+      document.getElementById('he-alias').value = h.alias || '';
+      document.getElementById('he-subtitle').value = h.subtitle || '';
+      document.getElementById('he-statement').value = h.statement || '';
+      document.getElementById('he-heroImage').value = h.heroImage || '';
+      document.getElementById('he-portraitImage').value = h.portraitImage || '';
+    }
+
+    async function saveHome(e) {
+      e.preventDefault();
+      const hero = {
+        displayName: document.getElementById('he-displayName').value,
+        alias: document.getElementById('he-alias').value,
+        subtitle: document.getElementById('he-subtitle').value,
+        statement: document.getElementById('he-statement').value,
+        heroImage: document.getElementById('he-heroImage').value,
+        portraitImage: document.getElementById('he-portraitImage').value,
+      };
+      try {
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hero }) });
+        toast('Home page saved!', 'success');
+        siteData.hero = hero;
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+      return false;
+    }
+
+    // === ABOUT EDITOR ===
+    function populateAboutEditor() {
+      const a = siteData.about || {};
+      document.getElementById('ab-biography').value = a.biography || '';
+      document.getElementById('ab-artisticStatement').value = a.artisticStatement || '';
+      document.getElementById('ab-aliasExplanation').value = a.aliasExplanation || '';
+      document.getElementById('ab-education').value = JSON.stringify(a.education || [], null, 2);
+      document.getElementById('ab-skills').value = (a.skills || []).join(', ');
+      document.getElementById('ab-awards').value = (a.awards || []).join('\n');
+      document.getElementById('ab-researchInterests').value = (a.researchInterests || [])
+        .map((r) => {
+          if (typeof r === 'string') return r;
+          const t = (r.title || r.name || '').trim();
+          const e = (r.explanation || r.desc || '').trim();
+          return e ? t + ' | ' + e : t;
+        })
+        .join('\n');
+    }
+
+    async function saveAbout(e) {
+      e.preventDefault();
+      let education;
+      try { education = JSON.parse(document.getElementById('ab-education').value); } catch { toast('Invalid education JSON', 'error'); return false; }
+      const about = {
+        biography: document.getElementById('ab-biography').value,
+        artisticStatement: document.getElementById('ab-artisticStatement').value,
+        aliasExplanation: document.getElementById('ab-aliasExplanation').value,
+        education,
+        skills: document.getElementById('ab-skills').value.split(',').map(s => s.trim()).filter(Boolean),
+        awards: document.getElementById('ab-awards').value.split('\n').map(s => s.trim()).filter(Boolean),
+        researchInterests: document.getElementById('ab-researchInterests').value
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((line) => {
+            const i = line.indexOf('|');
+            if (i === -1) return line;
+            const title = line.slice(0, i).trim();
+            const explanation = line.slice(i + 1).trim();
+            if (!title) return line;
+            if (!explanation) return title;
+            return { title, explanation };
+          }),
+      };
+      try {
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ about }) });
+        toast('About page saved!', 'success');
+        siteData.about = about;
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+      return false;
+    }
+
+    // === SCHEDULE ===
+    function renderEvents() {
+      const tbody = document.getElementById('eventsBody');
+      tbody.innerHTML = scheduleData.map(ev => `
+        <tr>
+          <td>${ev.event_date || ev.eventDate || ''}</td>
+          <td>${ev.title}</td>
+          <td>${ev.venue || ''}</td>
+          <td>${ev.city_country || ev.cityCountry || ''}</td>
+          <td>
+            <button class="btn btn-sm" onclick="editEvent(${ev.id})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteEvent(${ev.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showEventForm(ev) {
+      document.getElementById('eventFormWrap').style.display = 'block';
+      document.getElementById('eventFormTitle').textContent = ev ? 'Edit Event' : 'Add Event';
+      document.getElementById('ev-id').value = ev ? ev.id : '';
+      document.getElementById('ev-date').value = ev ? (ev.event_date || ev.eventDate || '') : '';
+      document.getElementById('ev-title').value = ev ? ev.title : '';
+      document.getElementById('ev-venue').value = ev ? (ev.venue || '') : '';
+      document.getElementById('ev-cityCountry').value = ev ? (ev.city_country || ev.cityCountry || '') : '';
+      document.getElementById('ev-workPerformed').value = ev ? (ev.work_performed || ev.workPerformed || '') : '';
+      document.getElementById('ev-link').value = ev ? (ev.link || '') : '';
+    }
+
+    function hideEventForm() {
+      document.getElementById('eventFormWrap').style.display = 'none';
+      document.getElementById('eventForm').reset();
+      document.getElementById('ev-id').value = '';
+    }
+
+    function editEvent(id) {
+      const ev = scheduleData.find(x => x.id === id);
+      if (ev) showEventForm(ev);
+    }
+
+    async function saveEvent(e) {
+      e.preventDefault();
+      const id = document.getElementById('ev-id').value;
+      const body = {
+        eventDate: document.getElementById('ev-date').value,
+        title: document.getElementById('ev-title').value,
+        venue: document.getElementById('ev-venue').value,
+        cityCountry: document.getElementById('ev-cityCountry').value,
+        workPerformed: document.getElementById('ev-workPerformed').value,
+        link: document.getElementById('ev-link').value,
+      };
+      try {
+        const url = id ? '/api/schedule/' + id : '/api/schedule';
+        const method = id ? 'PUT' : 'POST';
+        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        toast('Event saved!', 'success');
+        hideEventForm();
+        const res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+      return false;
+    }
+
+    async function deleteEvent(id) {
+      if (!confirm('Delete this event?')) return;
+      try {
+        await fetch('/api/schedule/' + id, { method: 'DELETE' });
+        toast('Event deleted', 'success');
+        const res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // === CONTACT EDITOR ===
+    function populateContactEditor() {
+      const c = siteData.contact || {};
+      document.getElementById('ct-displayName').value = c.displayName || '';
+      document.getElementById('ct-alias').value = c.alias || '';
+      document.getElementById('ct-email').value = c.email || '';
+      const sl = c.socialLinks || {};
+      document.getElementById('ct-instagram').value = sl.instagram || '';
+      document.getElementById('ct-soundcloud').value = sl.soundcloud || '';
+      document.getElementById('ct-youtube').value = sl.youtube || '';
+      document.getElementById('ct-github').value = sl.github || '';
+      document.getElementById('ct-cvPdfUrl').value = c.cvPdfUrl || '';
+      document.getElementById('ct-pressPhotoUrl').value = c.pressPhotoUrl || '';
+      document.getElementById('ct-shortBio').value = c.shortBio || '';
+      document.getElementById('ct-longBio').value = c.longBio || '';
+    }
+
+    async function saveContact(e) {
+      e.preventDefault();
+      const contact = {
+        displayName: document.getElementById('ct-displayName').value,
+        alias: document.getElementById('ct-alias').value,
+        email: document.getElementById('ct-email').value,
+        socialLinks: {
+          instagram: document.getElementById('ct-instagram').value,
+          soundcloud: document.getElementById('ct-soundcloud').value,
+          youtube: document.getElementById('ct-youtube').value,
+          github: document.getElementById('ct-github').value,
+        },
+        cvPdfUrl: document.getElementById('ct-cvPdfUrl').value,
+        pressPhotoUrl: document.getElementById('ct-pressPhotoUrl').value,
+        shortBio: document.getElementById('ct-shortBio').value,
+        longBio: document.getElementById('ct-longBio').value,
+      };
+      try {
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact }) });
+        toast('Contact info saved!', 'success');
+        siteData.contact = contact;
+      } catch (e) { toast('Error: ' + e.message, 'error'); }
+      return false;
+    }
+
+    // INIT
+    loadAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Populian Faming Qin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/about.html" class="active">About</a>
+        <a href="/works.html">Works</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/research.html">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <p class="section-label">Biography</p>
+    <h1 class="section-title">About</h1>
+  </div>
+
+  <div class="section section-after-header">
+    <div class="about-header">
+      <img id="portrait" class="about-portrait" src="" alt="Faming Qin portrait">
+      <div>
+        <p class="about-bio" id="biography">Loading...</p>
+        <div style="margin-top: 24px;">
+          <p class="section-label">Creative Identity</p>
+          <p id="aliasExplanation" style="font-size: 0.9rem; color: var(--text-secondary); font-style: italic; line-height: 1.8;"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <div>
+        <h3 class="about-block-title">Education</h3>
+        <div id="education"></div>
+      </div>
+      <div>
+        <h3 class="about-block-title">Skills &amp; Tools</h3>
+        <div id="skills" class="skill-tags"></div>
+      </div>
+      <div>
+        <h3 class="about-block-title">Awards &amp; Recognition</h3>
+        <ul id="awards" class="about-list"></ul>
+      </div>
+      <div>
+        <h3 class="about-block-title">Research Interests</h3>
+        <ul id="research" class="about-list"></ul>
+      </div>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h3 class="about-block-title">Artistic Statement</h3>
+      <p id="artisticStatement" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.9; max-width: 700px; font-style: italic;"></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function loadAbout() {
+      try {
+        const res = await fetch('/api/site');
+        const site = await res.json();
+        const about = site.about || {};
+        const hero = site.hero || {};
+
+        document.getElementById('biography').textContent = about.biography || '';
+        document.getElementById('aliasExplanation').textContent = about.aliasExplanation || '';
+        document.getElementById('artisticStatement').textContent = about.artisticStatement || '';
+
+        if (hero.portraitImage) {
+          document.getElementById('portrait').src = hero.portraitImage;
+        }
+
+        const eduEl = document.getElementById('education');
+        (about.education || []).forEach(e => {
+          eduEl.innerHTML += `<div class="edu-item"><p class="edu-institution">${e.institution}</p><p class="edu-degree">${e.degree}</p>${e.years ? `<p class="edu-years">${e.years}</p>` : ''}</div>`;
+        });
+
+        const skillsEl = document.getElementById('skills');
+        (about.skills || []).forEach(s => {
+          skillsEl.innerHTML += `<span class="skill-tag">${s}</span>`;
+        });
+
+        const awardsEl = document.getElementById('awards');
+        (about.awards || []).forEach(a => {
+          awardsEl.innerHTML += `<li>${a}</li>`;
+        });
+
+        const researchEl = document.getElementById('research');
+        (about.researchInterests || []).forEach((r) => {
+          if (typeof r === 'string') {
+            researchEl.innerHTML += `<li>${r}</li>`;
+            return;
+          }
+          const title = (r.title || r.name || '').trim();
+          const explanation = (r.explanation || r.desc || '').trim();
+          if (explanation) {
+            researchEl.innerHTML += `<li>${title} <span style="color:var(--text-secondary);font-style:italic;">(${explanation})</span></li>`;
+          } else {
+            researchEl.innerHTML += `<li>${title}</li>`;
+          }
+        });
+      } catch (e) {
+        console.error('Failed to load about data:', e);
+      }
+    }
+    loadAbout();
+  </script>
+</body>
+</html>

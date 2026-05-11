@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Populian Faming Qin - Electroacoustic Composer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="page-home">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html" class="active">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/works.html">Works</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/research.html">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero hero--home" id="heroSection">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-photo-wrap" id="heroPhotoWrap" hidden aria-hidden="true">
+        <div class="hero-photo-frame">
+          <div class="hero-photo" id="heroPhotoLayer" role="img" aria-label=""></div>
+        </div>
+      </div>
+      <div class="hero-content">
+        <h1 class="hero-name" id="heroName">Populian</h1>
+        <p class="hero-alias" id="heroAlias">Faming Qin 秦发鸣</p>
+        <p class="hero-subtitle" id="heroSubtitle">Electroacoustic Composer · Interactive Media Artist · Music Technology Researcher</p>
+        <div class="hero-divider" aria-hidden="true"></div>
+        <p class="hero-statement" id="heroStatement">His work focuses on electroacoustic composition, real-time interaction, algorithmic sound systems, and the expressive relationship between physical gesture and digital mediation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="homeFeaturedSection" class="section home-after-hero" hidden>
+    <p class="section-label">Selected Works</p>
+    <h2 class="section-title">Featured Compositions</h2>
+    <div class="section-divider"></div>
+    <div class="card-grid" id="featuredWorks"></div>
+  </section>
+
+  <section id="homeAwardsSection" class="section home-after-hero" hidden>
+    <p class="section-label">Recognition</p>
+    <h2 class="section-title">Awards &amp; Selections</h2>
+    <div class="section-divider"></div>
+    <div id="awardsGrid" class="card-grid home-awards-grid"></div>
+  </section>
+
+  <p id="homeNotice" class="home-notice" hidden></p>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function loadHome() {
+      const featuredSection = document.getElementById('homeFeaturedSection');
+      const awardsSection = document.getElementById('homeAwardsSection');
+      const homeNotice = document.getElementById('homeNotice');
+      const container = document.getElementById('featuredWorks');
+      const awardsGrid = document.getElementById('awardsGrid');
+
+      function hideBelowFold() {
+        featuredSection.hidden = true;
+        awardsSection.hidden = true;
+      }
+
+      try {
+        const [siteRes, worksRes] = await Promise.all([
+          fetch('/api/site'),
+          fetch('/api/works')
+        ]);
+        const site = await siteRes.json();
+        const works = await worksRes.json();
+
+        homeNotice.hidden = true;
+        homeNotice.textContent = '';
+
+        const hero = site.hero || {};
+        if (hero.displayName) document.getElementById('heroName').textContent = hero.displayName;
+        document.getElementById('heroAlias').textContent = hero.alias || '';
+        if (hero.subtitle) document.getElementById('heroSubtitle').textContent = hero.subtitle;
+        if (hero.statement) document.getElementById('heroStatement').textContent = hero.statement;
+
+        const about = site.about || {};
+        const photoUrl =
+          hero.heroImage ||
+          hero.hero_image ||
+          hero.portraitImage ||
+          hero.portrait_image ||
+          about.portraitImage ||
+          about.portrait_image;
+        const heroSection = document.getElementById('heroSection');
+        const photoWrap = document.getElementById('heroPhotoWrap');
+        const photoLayer = document.getElementById('heroPhotoLayer');
+        if (photoUrl) {
+          photoLayer.style.backgroundImage = 'url(' + JSON.stringify(photoUrl) + ')';
+          photoLayer.setAttribute(
+            'aria-label',
+            hero.displayName ? `Photo — ${hero.displayName}` : 'Artist photo'
+          );
+          photoWrap.hidden = false;
+          heroSection.classList.add('hero--has-photo');
+        } else {
+          photoLayer.style.backgroundImage = '';
+          photoWrap.hidden = true;
+          heroSection.classList.remove('hero--has-photo');
+        }
+
+        const featured = works.filter(w => w.featured);
+        if (featured.length === 0) {
+          featuredSection.hidden = true;
+          container.innerHTML = '';
+        } else {
+          featuredSection.hidden = false;
+          container.innerHTML = featured.map(w => `
+            <div class="card">
+              ${w.cover_image ? `<img class="card-image" src="${w.cover_image}" alt="${w.title}">` : ''}
+              <span class="card-featured-badge">Featured</span>
+              <p class="card-category">${w.category || ''}</p>
+              <h3 class="card-title">${w.title}${w.year ? ` (${w.year})` : ''}</h3>
+              <p class="card-desc">${w.description || ''}</p>
+              ${w.medium ? `<p class="card-meta">${w.medium}</p>` : ''}
+              ${w.festival_selections ? `<p class="card-meta">${w.festival_selections}</p>` : ''}
+              <div class="card-actions">
+                <a href="/works.html" class="card-link">View Details</a>
+                ${w.youtube_url ? `<a href="${w.youtube_url}" target="_blank" class="card-link">Watch</a>` : ''}
+              </div>
+            </div>
+          `).join('');
+        }
+
+        const awards = (site.about || {}).awards || [];
+        if (awards.length === 0) {
+          awardsSection.hidden = true;
+          awardsGrid.innerHTML = '';
+        } else {
+          awardsSection.hidden = false;
+          awardsGrid.innerHTML = awards.map(a => `
+            <div class="card home-award-card">
+              <p class="home-award-text">${a}</p>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Failed to load homepage data:', e);
+        hideBelowFold();
+        container.innerHTML = '';
+        awardsGrid.innerHTML = '';
+        document.getElementById('heroPhotoWrap').hidden = true;
+        document.getElementById('heroPhotoLayer').style.backgroundImage = '';
+        document.getElementById('heroSection').classList.remove('hero--has-photo');
+        homeNotice.hidden = false;
+        homeNotice.innerHTML = 'Content could not be loaded. If you are setting up the site, use the <a href="/admin.html">admin dashboard</a>.';
+      }
+    }
+    loadHome();
+  </script>
+</body>
+</html>

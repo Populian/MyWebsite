@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research — Populian Faming Qin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/works.html">Works</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/research.html" class="active">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <p class="section-label">Music Technology</p>
+    <h1 class="section-title">Research</h1>
+    <p class="section-desc">Exploring the intersection of technology, sound, and human expression.</p>
+  </div>
+
+  <div class="section section-after-header">
+    <div class="research-grid" id="researchGrid">
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const defaultResearch = [
+      { title: 'Neural-Driven Audio Systems', desc: 'Investigating the use of neural networks and machine learning models for audio synthesis, transformation, and real-time sound generation.', icon: '&#x1F9E0;' },
+      { title: 'Real-Time Music Interaction', desc: 'Developing systems for live performance where gesture, movement, and physical input drive musical outcomes through sensor technologies and digital signal processing.', icon: '&#x26A1;' },
+      { title: 'Network Music Performance', desc: 'Exploring telematic music-making and distributed performance systems that connect musicians across geographic distances through network protocols.', icon: '&#x1F310;' },
+      { title: 'Algorithmic Music Systems', desc: 'Designing rule-based and generative composition frameworks that produce musical structures through computational processes and formal grammars.', icon: '&#x1F4BB;' },
+      { title: 'Human-Computer Interaction in Music', desc: 'Studying how musicians and audiences engage with digital instruments, interactive installations, and computer-mediated musical experiences.', icon: '&#x1F3B9;' },
+      { title: 'Interactive Electroacoustic Performance', desc: 'Creating performance frameworks that bridge acoustic and electronic sound worlds through responsive digital systems and live electronics.', icon: '&#x1F3B6;' },
+    ];
+
+    async function loadResearch() {
+      let interests = defaultResearch;
+      try {
+        const res = await fetch('/api/site');
+        const site = await res.json();
+        const ri = (site.about || {}).researchInterests || [];
+        if (ri.length > 0) {
+          const fallbackGeneric =
+            'Research area exploring the boundaries of music technology and creative expression.';
+          interests = ri.map((r, i) => {
+            const title = typeof r === 'string' ? r : (r.title || r.name || '').trim();
+            const customDesc =
+              typeof r === 'object' && r !== null
+                ? String(r.explanation || r.desc || '').trim()
+                : '';
+            let desc;
+            if (customDesc) {
+              desc = customDesc;
+            } else if (typeof r === 'string') {
+              desc = fallbackGeneric;
+            } else {
+              desc = defaultResearch[i] ? defaultResearch[i].desc : fallbackGeneric;
+            }
+            return {
+              title,
+              desc,
+              icon:
+                typeof r === 'object' && r !== null && r.icon
+                  ? r.icon
+                  : defaultResearch[i]
+                    ? defaultResearch[i].icon
+                    : '&#x1F52C;',
+            };
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      document.getElementById('researchGrid').innerHTML = interests.map(r => `
+        <div class="research-card">
+          <div class="research-icon">${r.icon}</div>
+          <h3 class="research-title">${r.title}</h3>
+          <p class="research-desc">${r.desc}</p>
+        </div>
+      `).join('');
+    }
+    loadResearch();
+  </script>
+</body>
+</html>

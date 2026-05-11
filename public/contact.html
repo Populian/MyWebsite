@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Populian Faming Qin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/home.html" class="nav-logo">Populian Faming Qin</a>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/works.html">Works</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/research.html">Research</a>
+        <a href="/schedule.html">Schedule</a>
+        <a href="/contact.html" class="active">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <p class="section-label">Get in Touch</p>
+    <h1 class="section-title">Contact</h1>
+  </div>
+
+  <div class="section section-after-header">
+    <div class="contact-grid">
+      <div>
+        <div class="contact-block">
+          <p class="contact-label">Composer</p>
+          <p class="contact-value" id="contactName" style="font-family:var(--font-heading);font-size:1.5rem;">Faming Qin</p>
+          <p style="font-size:1.25rem;color:var(--text-muted);margin-top:4px;" id="contactAlias">Faming Qin</p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Email</p>
+          <p class="contact-value"><a href="mailto:populianmusic@gmail.com" id="contactEmail">populianmusic@gmail.com</a></p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Location</p>
+          <p class="contact-value">Xi'an, China</p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Social</p>
+          <div class="social-links" id="socialLinks"></div>
+        </div>
+      </div>
+      <div>
+        <div class="presskit-box">
+          <p class="section-label">Press Kit</p>
+          <h3 style="font-family:var(--font-heading);font-size:1.3rem;margin:12px 0 16px;">For Press &amp; Programmers</h3>
+          <p id="pressShortBio" style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;margin-bottom:20px;"></p>
+          <div id="pressActions" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-name">Populian Faming Qin</p>
+      <p>&copy; 2026 Populian Faming Qin. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function loadContact() {
+      try {
+        const res = await fetch('/api/site');
+        const site = await res.json();
+        const contact = site.contact || {};
+
+        if (contact.displayName) document.getElementById('contactName').textContent = contact.displayName;
+        const aliasEl = document.getElementById('contactAlias');
+        if (contact.alias) {
+          aliasEl.textContent = contact.alias;
+          aliasEl.style.display = '';
+        } else {
+          aliasEl.textContent = '';
+          aliasEl.style.display = 'none';
+        }
+        if (contact.email) {
+          const el = document.getElementById('contactEmail');
+          el.textContent = contact.email;
+          el.href = 'mailto:' + contact.email;
+        }
+
+        const social = contact.socialLinks || {};
+        const socialEl = document.getElementById('socialLinks');
+        if (social.instagram) socialEl.innerHTML += `<a href="${social.instagram}" target="_blank" class="social-link">Instagram</a>`;
+        if (social.soundcloud) socialEl.innerHTML += `<a href="${social.soundcloud}" target="_blank" class="social-link">SoundCloud</a>`;
+        if (social.youtube) socialEl.innerHTML += `<a href="${social.youtube}" target="_blank" class="social-link">YouTube</a>`;
+        if (social.github) socialEl.innerHTML += `<a href="${social.github}" target="_blank" class="social-link">GitHub</a>`;
+
+        document.getElementById('pressShortBio').textContent = contact.shortBio || '';
+
+        const actions = document.getElementById('pressActions');
+        if (contact.cvPdfUrl) actions.innerHTML += `<a href="${contact.cvPdfUrl}" target="_blank" class="btn btn-sm">Download CV</a>`;
+        if (contact.pressPhotoUrl) actions.innerHTML += `<a href="${contact.pressPhotoUrl}" target="_blank" class="btn btn-sm">Press Photo</a>`;
+        actions.innerHTML += `<a href="mailto:${contact.email || 'populianmusic@gmail.com'}" class="btn btn-sm btn-primary">Contact</a>`;
+      } catch (e) {
+        console.error('Failed to load contact:', e);
+      }
+    }
+    loadContact();
+  </script>
+</body>
+</html>
