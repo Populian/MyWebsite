@@ -32,6 +32,13 @@
   </div>
 
   <div class="section section-after-header">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:36px;align-items:center;">
+      <div style="display:flex;gap:4px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.06);border-radius:980px;padding:3px;">
+        <button class="filter-btn" id="schedToggleAll" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('all')">All Events</button>
+        <button class="filter-btn active" id="schedToggleUpcoming" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('upcoming')">Upcoming</button>
+        <button class="filter-btn" id="schedTogglePast" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('past')">Past</button>
+      </div>
+    </div>
     <div class="timeline" id="timeline">
       <div class="loading">Loading schedule</div>
     </div>
@@ -45,32 +52,103 @@
   </footer>
 
   <script>
+    var allEvents = [];
+    var schedFilter = 'upcoming';
+
+    function formatDate(dateStr) {
+      var d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function getMonthKey(dateStr) {
+      var d = new Date(dateStr);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+
+    function getMonthLabel(dateStr) {
+      var d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+    }
+
+    function isPast(dateStr) {
+      var d = new Date(dateStr);
+      var now = new Date();
+      now.setHours(0, 0, 0, 0);
+      return d < now;
+    }
+
+    function setSchedFilter(filter) {
+      schedFilter = filter;
+      document.querySelectorAll('#schedToggleAll, #schedToggleUpcoming, #schedTogglePast').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      var id = filter === 'all' ? 'schedToggleAll' : filter === 'upcoming' ? 'schedToggleUpcoming' : 'schedTogglePast';
+      document.getElementById(id).classList.add('active');
+      renderSchedule();
+    }
+
+    function renderSchedule() {
+      var timeline = document.getElementById('timeline');
+      var filtered = allEvents;
+      if (schedFilter === 'upcoming') {
+        filtered = allEvents.filter(function(e) { return !isPast(e.event_date || e.eventDate); });
+      } else if (schedFilter === 'past') {
+        filtered = allEvents.filter(function(e) { return isPast(e.event_date || e.eventDate); });
+      }
+
+      if (filtered.length === 0) {
+        var msg = schedFilter === 'upcoming' ? 'No upcoming events scheduled.' : schedFilter === 'past' ? 'No past events recorded.' : 'No events scheduled.';
+        timeline.innerHTML = '<p class="empty-state">' + msg + ' Check back soon.</p>';
+        return;
+      }
+
+      // Group by month
+      var groups = {};
+      filtered.forEach(function(e) {
+        var key = getMonthKey(e.event_date || e.eventDate);
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(e);
+      });
+
+      var keys = Object.keys(groups).sort();
+      var html = '';
+      keys.forEach(function(key) {
+        var events = groups[key];
+        var label = getMonthLabel(events[0].event_date || events[0].eventDate);
+        html += '<div class="timeline-month">' + label + '</div>';
+        events.forEach(function(e) {
+          var dateStr = formatDate(e.event_date || e.eventDate);
+          var isPastEvent = isPast(e.event_date || e.eventDate);
+          html += '<div class="timeline-item' + (isPastEvent ? ' timeline-item--past' : '') + '">';
+          html += '<div class="timeline-date">';
+          html += '<span class="timeline-date-badge">' + dateStr + '</span>';
+          html += '</div>';
+          html += '<div>';
+          html += '<div class="timeline-title">' + e.title + '</div>';
+          html += '<div class="timeline-details">';
+          if (e.venue) html += e.venue;
+          if (e.city_country || e.cityCountry) {
+            if (e.venue) html += ' — ';
+            html += (e.city_country || e.cityCountry);
+          }
+          if (e.work_performed || e.workPerformed) {
+            html += '<br>Performing: <em>' + (e.work_performed || e.workPerformed) + '</em>';
+          }
+          html += '</div>';
+          if (e.link) html += '<a href="' + e.link + '" target="_blank" class="timeline-link">Event Details &rarr;</a>';
+          html += '</div></div>';
+        });
+      });
+
+      timeline.innerHTML = html;
+    }
+
     async function loadSchedule() {
       try {
         const res = await fetch('/api/schedule');
         const events = await res.json();
-        const timeline = document.getElementById('timeline');
-        if (events.length === 0) {
-          timeline.innerHTML = '<p class="empty-state">No upcoming events scheduled. Check back soon.</p>';
-          return;
-        }
-        timeline.innerHTML = events.map(e => {
-          const d = new Date(e.event_date || e.eventDate);
-          const dateStr = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-          return `
-            <div class="timeline-item">
-              <div class="timeline-date">${dateStr}</div>
-              <div>
-                <div class="timeline-title">${e.title}</div>
-                <div class="timeline-details">
-                  ${e.venue ? `${e.venue}` : ''}${e.city_country || e.cityCountry ? ` — ${e.city_country || e.cityCountry}` : ''}
-                  ${e.work_performed || e.workPerformed ? `<br>Performing: <em>${e.work_performed || e.workPerformed}</em>` : ''}
-                </div>
-                ${e.link ? `<a href="${e.link}" target="_blank" class="timeline-link">Event Details &rarr;</a>` : ''}
-              </div>
-            </div>
-          `;
-        }).join('');
+        allEvents = Array.isArray(events) ? events : [];
+        renderSchedule();
       } catch (e) {
         console.error('Failed to load schedule:', e);
         document.getElementById('timeline').innerHTML = '<p class="empty-state">Schedule not available. Check back soon.</p>';

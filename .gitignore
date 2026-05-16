@@ -1,6 +1,8 @@
 node_modules/
-dist/
-.netlify/
-uploads/
-.DS_Store
+uploads/*
+!uploads/.gitkeep
+.env
+data.json.bak
 *.log
+dist/
+.DS_Store

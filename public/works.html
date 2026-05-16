@@ -35,6 +35,12 @@
     <div class="filter-bar" id="filterBar">
       <button class="filter-btn active" data-cat="all">All</button>
     </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:36px;align-items:center;">
+      <input type="text" id="worksSearch" class="works-search" placeholder="Search works..." onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--accent-dim)'" onblur="this.style.borderColor='rgba(0,0,0,.08)';this.style.boxShadow='none'">
+      <select id="yearFilter" class="works-year-select">
+        <option value="all">All Years</option>
+      </select>
+    </div>
     <div class="card-grid" id="worksGrid">
       <div class="loading">Loading works</div>
     </div>
@@ -87,20 +93,34 @@
       };
     }
 
-    function renderWorks(filter) {
+    function renderWorks(filter, searchTerm, yearVal) {
       const grid = document.getElementById('worksGrid');
-      const filtered = filter === 'all' ? allWorks : allWorks.filter(w => w.category === filter);
+      let filtered = filter === 'all' ? allWorks : allWorks.filter(w => w.category === filter);
+      // Search filter
+      if (searchTerm) {
+        const st = searchTerm.toLowerCase();
+        filtered = filtered.filter(w =>
+          (w.title || '').toLowerCase().includes(st) ||
+          (w.description || '').toLowerCase().includes(st) ||
+          (w.medium || '').toLowerCase().includes(st) ||
+          (w.category || '').toLowerCase().includes(st)
+        );
+      }
+      // Year filter
+      if (yearVal && yearVal !== 'all') {
+        filtered = filtered.filter(w => String(w.year) === yearVal);
+      }
       if (filtered.length === 0) {
-        grid.innerHTML = '<p class="empty-state">No works found in this category.</p>';
+        grid.innerHTML = '<p class="empty-state">No works found matching your criteria.</p>';
         return;
       }
       grid.innerHTML = filtered.map((w, i) => `
-        <div class="card" style="cursor:pointer" onclick="openModal(${w.id})">
-          ${w.cover_image ? `<img class="card-image" src="${w.cover_image}" alt="${w.title}">` : ''}
+        <div class="card" style="cursor:pointer;opacity:0;transform:translateY(16px);animation:cardFadeIn 0.5s cubic-bezier(0.25,0.1,0.25,1) ${i * 0.06}s forwards;" onclick="openModal(${w.id})">
+          ${w.cover_image ? `<img class="card-image" src="${w.cover_image}" alt="${w.title}" loading="lazy">` : ''}
           ${w.featured ? '<span class="card-featured-badge">Featured</span>' : ''}
           <p class="card-category">${w.category || ''}</p>
           <h3 class="card-title">${w.title}${w.year ? ` (${w.year})` : ''}</h3>
-          <p class="card-desc">${w.description || ''}</p>
+          <p class="card-desc">${(w.description || '').substring(0, 200)}${(w.description || '').length > 200 ? '...' : ''}</p>
           ${w.medium ? `<p class="card-meta">${w.medium}</p>` : ''}
           <div class="card-actions">
             ${w.youtube_url ? '<span class="card-link">Video</span>' : ''}
@@ -145,6 +165,18 @@
       if (e.target === this) closeModal();
     });
 
+    function getActiveFilter() {
+      var active = document.querySelector('#filterBar .filter-btn.active');
+      return active ? active.dataset.cat : 'all';
+    }
+
+    function reRender() {
+      var cat = getActiveFilter();
+      var searchVal = document.getElementById('worksSearch').value;
+      var yearVal = document.getElementById('yearFilter').value;
+      renderWorks(cat, searchVal, yearVal);
+    }
+
     async function loadWorks() {
       try {
         const res = await fetch('/api/works');
@@ -158,21 +190,35 @@
           btn.className = 'filter-btn';
           btn.dataset.cat = cat;
           btn.textContent = cat;
-          btn.onclick = () => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderWorks(cat);
+          btn.onclick = function() {
+            document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            reRender();
           };
           filterBar.appendChild(btn);
         });
 
-        document.querySelector('[data-cat="all"]').onclick = () => {
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-cat="all"]').onclick = function() {
+          document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
           document.querySelector('[data-cat="all"]').classList.add('active');
-          renderWorks('all');
+          reRender();
         };
 
-        renderWorks('all');
+        // Populate year filter
+        var years = [...new Set(allWorks.map(function(w) { return w.year; }).filter(Boolean))].sort(function(a, b) { return b - a; });
+        var yearSelect = document.getElementById('yearFilter');
+        years.forEach(function(y) {
+          var opt = document.createElement('option');
+          opt.value = y;
+          opt.textContent = y;
+          yearSelect.appendChild(opt);
+        });
+
+        // Search on input
+        document.getElementById('worksSearch').addEventListener('input', reRender);
+        document.getElementById('yearFilter').addEventListener('change', reRender);
+
+        reRender();
       } catch (e) {
         console.error('Failed to load works:', e);
         document.getElementById('worksGrid').innerHTML = '<p class="empty-state">No works available yet.</p>';

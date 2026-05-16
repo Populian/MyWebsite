@@ -26,20 +26,27 @@
   </nav>
 
   <section class="hero hero--home" id="heroSection">
-    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-bg hero-parallax-layer" data-parallax-speed="-0.08" aria-hidden="true"></div>
+    <div class="hero-ambient" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
     <div class="hero-inner">
-      <div class="hero-photo-wrap" id="heroPhotoWrap" hidden aria-hidden="true">
+      <div class="hero-photo-wrap hero-parallax-layer" id="heroPhotoWrap" data-parallax-speed="-0.04" hidden aria-hidden="true">
         <div class="hero-photo-frame">
           <div class="hero-photo" id="heroPhotoLayer" role="img" aria-label=""></div>
         </div>
       </div>
-      <div class="hero-content">
+      <div class="hero-content hero-parallax-layer" data-parallax-speed="0.06" id="heroContent">
         <h1 class="hero-name" id="heroName">Populian</h1>
         <p class="hero-alias" id="heroAlias">Faming Qin 秦发鸣</p>
         <p class="hero-subtitle" id="heroSubtitle">Electroacoustic Composer · Interactive Media Artist · Music Technology Researcher</p>
         <div class="hero-divider" aria-hidden="true"></div>
         <p class="hero-statement" id="heroStatement">His work focuses on electroacoustic composition, real-time interaction, algorithmic sound systems, and the expressive relationship between physical gesture and digital mediation.</p>
       </div>
+    </div>
+    <div class="hero-scroll-indicator" onclick="document.getElementById('homeFeaturedSection').scrollIntoView({behavior:'smooth'})" aria-hidden="true">
+      <div class="mouse"></div>
+      <span class="label">Scroll</span>
     </div>
   </section>
 
@@ -169,6 +176,31 @@
       }
     }
     loadHome();
+
+    // Parallax scroll effect for hero
+    (function initParallax() {
+      var layers = document.querySelectorAll('.hero-parallax-layer');
+      if (layers.length === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            var scrollY = window.scrollY;
+            var hero = document.getElementById('heroSection');
+            if (!hero) return;
+            var heroBottom = hero.offsetTop + hero.offsetHeight;
+            if (scrollY <= heroBottom) {
+              for (var i = 0; i < layers.length; i++) {
+                var speed = parseFloat(layers[i].dataset.parallaxSpeed) || 0;
+                layers[i].style.transform = 'translate3d(0, ' + (scrollY * speed) + 'px, 0)';
+              }
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
   </script>
 </body>
 </html>

@@ -254,8 +254,8 @@
       "alias": "Faming Qin 秦发鸣",
       "subtitle": "Electroacoustic Composer · Interactive Media Artist · Music Technology Researcher",
       "statement": "Faming Qin, also known as Populian, is an electroacoustic composer, interactive media artist, and music technology researcher based in Xi'an, China.",
-      "heroImage": "http://localhost:3000/uploads/image/hero.png",
-      "portraitImage": "http://localhost:3000/uploads/image/portraits1.jpeg",
+      "heroImage": "",
+      "portraitImage": "",
       "featuredWorkIds": []
     },
     "about": {

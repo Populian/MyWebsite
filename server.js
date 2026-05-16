@@ -121,6 +121,43 @@ const SEED_SITE = {
   contact: DEFAULT_SITE.contact,
 };
 
+function normalizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  // Strip legacy localhost base URLs
+  const stripped = url.replace(/^https?:\/\/localhost:\d+\/uploads\//, '/uploads/');
+  // Ensure it starts with /uploads/ or is a relative path
+  if (stripped && !startsWithAny(stripped, ['http://', 'https://', '/'])) {
+    return '/uploads/' + stripped;
+  }
+  return stripped;
+}
+
+function startsWithAny(str, prefixes) {
+  return prefixes.some(p => str.startsWith(p));
+}
+
+function normalizeImageUrlsInSite(site) {
+  if (!site) return site;
+  if (site.hero) {
+    site.hero.heroImage = normalizeImageUrl(site.hero.heroImage);
+    site.hero.hero_image = normalizeImageUrl(site.hero.hero_image);
+    site.hero.portraitImage = normalizeImageUrl(site.hero.portraitImage);
+    site.hero.portrait_image = normalizeImageUrl(site.hero.portrait_image);
+  }
+  if (site.contact) {
+    site.contact.pressPhotoUrl = normalizeImageUrl(site.contact.pressPhotoUrl);
+  }
+  return site;
+}
+
+function normalizeImageUrlsInWorks(works) {
+  for (const w of works) {
+    w.coverImage = normalizeImageUrl(w.coverImage);
+    w.cover_image = normalizeImageUrl(w.cover_image);
+  }
+  return works;
+}
+
 function readData() {
   try {
     const raw = fs.readFileSync(dataFile, 'utf8');
@@ -225,6 +262,9 @@ function readDataAndPersistMigrations() {
   let dirty = false;
   if (migrateWorksInPlace(data.works)) dirty = true;
   if (migrateScheduleInPlace(data.schedule)) dirty = true;
+  // Always normalize image URLs (idempotent)
+  normalizeImageUrlsInSite(data.site);
+  normalizeImageUrlsInWorks(data.works);
   if (dirty) writeData(data);
   return data;
 }
@@ -244,7 +284,7 @@ function buildWorkFromBody(body, id) {
     soundcloudUrl: body.soundcloudUrl || '',
     audioUrl: body.audioUrl || '',
     scorePdfUrl: body.scorePdfUrl || '',
-    coverImage: body.coverImage || '',
+    coverImage: normalizeImageUrl(body.coverImage || ''),
     tags: Array.isArray(body.tags) ? body.tags : [],
     featured: Boolean(body.featured),
     sortOrder: body.sortOrder != null ? Number(body.sortOrder) : 0,
