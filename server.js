@@ -28,7 +28,7 @@ const DEFAULT_SITE = {
   },
   contact: {
     email: 'populianmusic@gmail.com',
-    socialLinks: { instagram: '', soundcloud: '', youtube: '', github: '' },
+    socialLinks: { instagram: '', soundcloud: '', youtube: '', github: '', bilibili: '' },
     cvPdfUrl: '',
     shortBio: '',
     longBio: '',
@@ -71,6 +71,41 @@ const SEED_WORKS = [
     festivalSelections: "Xi'an Conservatory of Music; CCF China Computer Art Conference 2025",
     featured: false,
     sortOrder: 3,
+  },
+];
+
+const SEED_SCHEDULE = [
+  {
+    eventDate: '2026-06-15',
+    title: 'NYCEMF 2026 — Electroacoustic Music Festival',
+    venue: 'New York City Electroacoustic Music Festival',
+    cityCountry: 'New York, USA',
+    workPerformed: 'A Voice Intolerable to Heaven and Earth',
+    link: '',
+  },
+  {
+    eventDate: '2026-07-22',
+    title: 'ICMC 2026 — International Computer Music Conference',
+    venue: 'Hamburg University of Music and Theatre',
+    cityCountry: 'Hamburg, Germany',
+    workPerformed: 'A Voice Intolerable to Heaven and Earth',
+    link: '',
+  },
+  {
+    eventDate: '2026-09-10',
+    title: 'SEAMUS 2026 National Conference',
+    venue: 'Virginia Tech',
+    cityCountry: 'Blacksburg, VA, USA',
+    workPerformed: '1/2',
+    link: '',
+  },
+  {
+    eventDate: '2026-05-01',
+    title: 'CCMC Futura — Computer Music Conference',
+    venue: 'Kyoto University',
+    cityCountry: 'Kyoto, Japan',
+    workPerformed: 'A Voice Intolerable to Heaven and Earth',
+    link: '',
   },
 ];
 
@@ -494,12 +529,20 @@ app.post('/api/seed', (req, res) => {
     maxId += 1;
     data.works.push(buildWorkFromBody(w, maxId));
   }
+  if (data.schedule.length === 0) {
+    let maxId = 0;
+    for (const ev of SEED_SCHEDULE) {
+      maxId += 1;
+      data.schedule.push({ id: maxId, ...ev });
+    }
+  }
   data.site = { ...data.site, ...JSON.parse(JSON.stringify(SEED_SITE)) };
   writeData(data);
   res.json({
     success: true,
     seeded: true,
     works: SEED_WORKS.length,
+    schedule: data.schedule.length,
     configs: Object.keys(SEED_SITE).length,
   });
 });

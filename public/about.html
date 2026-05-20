@@ -83,8 +83,11 @@
         const hero = site.hero || {};
 
         document.getElementById('biography').textContent = about.biography || '';
+        document.getElementById('biography').style.whiteSpace = 'pre-line';
         document.getElementById('aliasExplanation').textContent = about.aliasExplanation || '';
+        document.getElementById('aliasExplanation').style.whiteSpace = 'pre-line';
         document.getElementById('artisticStatement').textContent = about.artisticStatement || '';
+        document.getElementById('artisticStatement').style.whiteSpace = 'pre-line';
 
         if (hero.portraitImage) {
           document.getElementById('portrait').src = hero.portraitImage;

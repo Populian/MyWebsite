@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard — Populian Faming Qin</title>
+  <title>Admin — Populian Faming Qin</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
@@ -26,7 +26,7 @@
     .admin-nav a:hover{background:rgba(0,0,0,.04);color:var(--text)}
     .admin-nav a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,113,227,.06)}
     .admin-nav .sep{height:1px;background:var(--border);margin:12px 20px}
-    .admin-main{flex:1;margin-left:220px;padding:32px;max-width:900px}
+    .admin-main{flex:1;margin-left:220px;padding:32px;max-width:960px}
     .admin-main h1{font-size:22px;font-weight:600;margin-bottom:24px;letter-spacing:-.02em}
     .admin-section{display:none}
     .admin-section.active{display:block}
@@ -35,7 +35,10 @@
     .form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;transition:border-color .2s,box-shadow .2s}
     .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
     .form-group textarea{min-height:80px;resize:vertical}
+    .form-group textarea.lg{min-height:140px}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
     .form-check{display:flex;align-items:center;gap:8px}
     .form-check input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent)}
     .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);color:var(--text);transition:background .2s,border-color .2s,transform .2s}
@@ -67,12 +70,13 @@
     .media-item img{width:100%;height:100%;object-fit:cover}
     .media-item .del{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
     .media-item:hover .del{opacity:1}
-    .url-display{font-size:12px;color:var(--text3);word-break:break-all;margin-top:4px;padding:6px 8px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
     .stat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
     .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
     .stat-card .num{font-size:28px;font-weight:600;color:var(--accent);letter-spacing:-.02em}
     .stat-card .lbl{font-size:12px;color:var(--text2);margin-top:4px}
     #workFormWrap,#eventFormWrap{background:var(--bg2)!important;border:1px solid var(--border)!important}
+
+    /* Media picker */
     .media-picker-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);justify-content:center;align-items:center;padding:24px}
     .media-picker-overlay.active{display:flex}
     .media-picker-modal{background:var(--bg2);border-radius:var(--radius);max-width:680px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.2)}
@@ -80,7 +84,6 @@
     .media-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
     .media-picker-item{aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:border-color .2s,transform .2s}
     .media-picker-item:hover{border-color:var(--accent);transform:scale(1.04)}
-    .media-picker-item.selected{border-color:var(--accent)}
     .media-picker-item img{width:100%;height:100%;object-fit:cover}
     .media-picker-close{float:right;background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;padding:4px 8px}
     .media-picker-close:hover{color:var(--text)}
@@ -89,7 +92,53 @@
     .btn-browse:hover{background:var(--bg4);border-color:var(--border2);color:var(--text)}
     .input-with-browse{display:flex;align-items:center;gap:4px}
     .input-with-browse input{flex:1}
-    @media(max-width:768px){.admin-sidebar{display:none}.admin-main{margin-left:0}}
+
+    /* === VISUAL CMS COMPONENTS === */
+
+    /* Tag editor */
+    .tag-editor{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);cursor:text;transition:border-color .2s,box-shadow .2s}
+    .tag-editor:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+    .tag-editor input{flex:1;min-width:100px;border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text);padding:2px 0}
+    .tag{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);font-size:12px;font-weight:500;padding:4px 10px;border-radius:980px;white-space:nowrap}
+    .tag-remove{cursor:pointer;font-size:14px;line-height:1;color:var(--accent);opacity:.6;margin-left:2px}
+    .tag-remove:hover{opacity:1}
+
+    /* Repeatable card list */
+    .card-list{margin:12px 0;display:flex;flex-direction:column;gap:12px}
+    .repeat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color .2s}
+    .repeat-card:hover{border-color:var(--border2)}
+    .repeat-card .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .repeat-card .card-header .card-label{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
+    .repeat-card .card-header .btn-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px;transition:background .2s}
+    .repeat-card .card-header .btn-remove:hover{background:rgba(215,0,21,.08)}
+    .repeat-card .form-row{margin-bottom:0}
+    .repeat-card .form-group{margin-bottom:10px}
+    .repeat-card .form-group:last-child{margin-bottom:0}
+
+    /* Image upload with preview */
+    .img-upload-wrap{display:flex;gap:16px;align-items:flex-start}
+    .img-upload-fields{flex:1}
+    .img-preview{width:120px;height:120px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--bg3);flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
+    .img-preview img{width:100%;height:100%;object-fit:cover}
+    .img-preview .placeholder{color:var(--text3);font-size:11px;text-align:center;padding:8px}
+    .img-preview .btn-remove-img{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+    .img-preview:hover .btn-remove-img{opacity:1}
+    .img-upload-btn{font-size:11px;padding:6px 14px;border-radius:980px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
+    .img-upload-btn:hover{background:var(--bg4);border-color:var(--border2);color:var(--text)}
+    .img-upload-btn input{display:none}
+
+    /* Simple list editor (awards, etc.) */
+    .simple-list{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+    .simple-list-item{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;transition:border-color .2s}
+    .simple-list-item:hover{border-color:var(--border2)}
+    .simple-list-item input{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text)}
+    .simple-list-item .btn-remove-item{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;border-radius:4px;transition:color .2s,background .2s}
+    .simple-list-item .btn-remove-item:hover{color:var(--red);background:rgba(215,0,21,.06)}
+
+    /* Section divider within admin */
+    .admin-section-divider{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+    @media(max-width:768px){.admin-sidebar{display:none}.admin-main{margin-left:0}.form-row,.form-row-3,.form-row-4{grid-template-columns:1fr}.img-upload-wrap{flex-direction:column}.img-preview{width:100%;height:160px}}
   </style>
 </head>
 <body>
@@ -113,7 +162,7 @@
 
     <main class="admin-main">
 
-      <!-- DASHBOARD -->
+      <!-- ========== DASHBOARD ========== -->
       <div id="sec-dashboard" class="admin-section active">
         <h1>Dashboard</h1>
         <div class="stat-cards" id="stats"></div>
@@ -123,11 +172,11 @@
         </div>
       </div>
 
-      <!-- WORKS -->
+      <!-- ========== WORKS ========== -->
       <div id="sec-works" class="admin-section">
         <h1>Works Manager</h1>
         <button class="btn btn-accent" onclick="showWorkForm()">+ Add New Work</button>
-        <div id="workFormWrap" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+        <div id="workFormWrap" style="display:none;margin-top:20px;padding:24px;border-radius:var(--radius)">
           <h3 style="margin-bottom:16px;font-size:16px;" id="workFormTitle">Add New Work</h3>
           <form id="workForm" onsubmit="return saveWork(event)">
             <input type="hidden" id="wk-id">
@@ -136,11 +185,11 @@
               <div class="form-group"><label>Year</label><input id="wk-year" type="number" min="1900" max="2100"></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Category</label><input id="wk-category" placeholder="e.g. Electroacoustic, Interactive Systems"></div>
-              <div class="form-group"><label>Medium / Instrumentation</label><input id="wk-medium" placeholder="e.g. Fixed media, Interactive electronics"></div>
+              <div class="form-group"><label>Category</label><input id="wk-category" placeholder="e.g. Electroacoustic"></div>
+              <div class="form-group"><label>Medium / Instrumentation</label><input id="wk-medium" placeholder="e.g. Fixed media"></div>
             </div>
-            <div class="form-group"><label>Description</label><textarea id="wk-description"></textarea></div>
-            <div class="form-group"><label>Program Note</label><textarea id="wk-programNote"></textarea></div>
+            <div class="form-group"><label>Description</label><textarea id="wk-description" class="lg"></textarea></div>
+            <div class="form-group"><label>Program Note</label><textarea id="wk-programNote" class="lg"></textarea></div>
             <div class="form-row">
               <div class="form-group"><label>Premiere Info</label><input id="wk-premiereInfo"></div>
               <div class="form-group"><label>Festival Selections</label><input id="wk-festivalSelections"></div>
@@ -153,11 +202,33 @@
               <div class="form-group"><label>Audio File URL</label><input id="wk-audioUrl" type="url"></div>
               <div class="form-group"><label>Score PDF URL</label><input id="wk-scorePdfUrl" type="url"></div>
             </div>
-            <div class="form-row">
-              <div class="form-group"><label>Cover Image URL</label><div class="input-with-browse"><input id="wk-coverImage" placeholder="Upload in Media Manager, paste URL here"><button type="button" class="btn-browse" onclick="openMediaPicker('wk-coverImage')">Browse Media</button></div></div>
-              <div class="form-group"><label>Tags (comma-separated)</label><input id="wk-tags" placeholder="e.g. electronic, interactive, dance"></div>
+            <div class="form-group">
+              <label>Cover Image</label>
+              <div class="img-upload-wrap">
+                <div class="img-upload-fields">
+                  <div class="input-with-browse">
+                    <input id="wk-coverImage" placeholder="Image URL or upload">
+                    <button type="button" class="btn-browse" onclick="openMediaPicker('wk-coverImage')">Browse</button>
+                  </div>
+                  <div style="margin-top:6px">
+                    <label class="img-upload-btn">&#128206; Upload
+                      <input type="file" accept="image/*" onchange="uploadAndFill('wk-coverImage',this)">
+                    </label>
+                  </div>
+                </div>
+                <div class="img-preview" id="preview-wk-coverImage">
+                  <span class="placeholder">No image</span>
+                </div>
+              </div>
             </div>
-            <div class="form-check" style="margin-bottom:16px;">
+            <div class="form-group">
+              <label>Tags</label>
+              <div class="tag-editor" id="tag-editor-wk" onclick="document.querySelector('#tag-editor-wk input').focus()">
+                <div class="tags" id="wk-tags-display"></div>
+                <input type="text" id="wk-tag-input" placeholder="Type and press Enter" onkeydown="return tagKeydown(event,'wk-tags-display','wk-tag-input')">
+              </div>
+            </div>
+            <div class="form-check" style="margin-bottom:16px">
               <input type="checkbox" id="wk-featured"><label for="wk-featured" style="text-transform:none;font-size:13px;color:var(--text)">Featured work</label>
             </div>
             <div class="btn-group">
@@ -172,7 +243,7 @@
         </table>
       </div>
 
-      <!-- MEDIA -->
+      <!-- ========== MEDIA ========== -->
       <div id="sec-media" class="admin-section">
         <h1>Media Manager</h1>
         <div class="form-group">
@@ -193,7 +264,7 @@
         <div class="media-grid" id="mediaGrid"></div>
       </div>
 
-      <!-- HOME EDITOR -->
+      <!-- ========== HOME EDITOR ========== -->
       <div id="sec-home-editor" class="admin-section">
         <h1>Home Page Editor</h1>
         <form onsubmit="return saveHome(event)">
@@ -202,36 +273,99 @@
             <div class="form-group"><label>Artist Alias</label><input id="he-alias"></div>
           </div>
           <div class="form-group"><label>Subtitle</label><input id="he-subtitle"></div>
-          <div class="form-group"><label>Artist Statement</label><textarea id="he-statement"></textarea></div>
+          <div class="form-group"><label>Artist Statement</label><textarea id="he-statement" class="lg"></textarea></div>
           <div class="form-row">
-            <div class="form-group"><label>Hero Image URL</label><div class="input-with-browse"><input id="he-heroImage"><button type="button" class="btn-browse" onclick="openMediaPicker('he-heroImage')">Browse Media</button></div></div>
-            <div class="form-group"><label>Portrait Image URL</label><div class="input-with-browse"><input id="he-portraitImage"><button type="button" class="btn-browse" onclick="openMediaPicker('he-portraitImage')">Browse Media</button></div></div>
+            <div class="form-group">
+              <label>Hero Image</label>
+              <div class="img-upload-wrap">
+                <div class="img-upload-fields">
+                  <div class="input-with-browse">
+                    <input id="he-heroImage" placeholder="Image URL or upload">
+                    <button type="button" class="btn-browse" onclick="openMediaPicker('he-heroImage')">Browse</button>
+                  </div>
+                  <div style="margin-top:6px">
+                    <label class="img-upload-btn">&#128206; Upload
+                      <input type="file" accept="image/*" onchange="uploadAndFill('he-heroImage',this)">
+                    </label>
+                  </div>
+                </div>
+                <div class="img-preview" id="preview-he-heroImage">
+                  <span class="placeholder">No image</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Portrait Image</label>
+              <div class="img-upload-wrap">
+                <div class="img-upload-fields">
+                  <div class="input-with-browse">
+                    <input id="he-portraitImage" placeholder="Image URL or upload">
+                    <button type="button" class="btn-browse" onclick="openMediaPicker('he-portraitImage')">Browse</button>
+                  </div>
+                  <div style="margin-top:6px">
+                    <label class="img-upload-btn">&#128206; Upload
+                      <input type="file" accept="image/*" onchange="uploadAndFill('he-portraitImage',this)">
+                    </label>
+                  </div>
+                </div>
+                <div class="img-preview" id="preview-he-portraitImage">
+                  <span class="placeholder">No image</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="btn-group"><button type="submit" class="btn btn-accent">Save Home Page</button></div>
         </form>
       </div>
 
-      <!-- ABOUT EDITOR -->
+      <!-- ========== ABOUT EDITOR ========== -->
       <div id="sec-about-editor" class="admin-section">
         <h1>About Page Editor</h1>
         <form onsubmit="return saveAbout(event)">
-          <div class="form-group"><label>Biography</label><textarea id="ab-biography" style="min-height:120px"></textarea></div>
-          <div class="form-group"><label>Artistic Statement</label><textarea id="ab-artisticStatement"></textarea></div>
+          <div class="form-group"><label>Biography</label><textarea id="ab-biography" class="lg"></textarea></div>
+          <div class="form-group"><label>Artistic Statement</label><textarea id="ab-artisticStatement" class="lg"></textarea></div>
           <div class="form-group"><label>Alias Explanation</label><textarea id="ab-aliasExplanation"></textarea></div>
-          <div class="form-group"><label>Education (JSON array)</label><textarea id="ab-education" style="min-height:100px" placeholder='[{"institution":"...","degree":"...","years":"..."}]'></textarea></div>
-          <div class="form-group"><label>Skills (comma-separated)</label><textarea id="ab-skills" placeholder="Max/MSP, Ableton Live, Kyma, ..."></textarea></div>
-          <div class="form-group"><label>Awards (one per line)</label><textarea id="ab-awards" style="min-height:120px"></textarea></div>
-          <div class="form-group"><label>Research Interests (one per line)</label><textarea id="ab-researchInterests" style="min-height:100px" placeholder="Title | Short explanation for Research page cards&#10;Electroacoustic Music | Focus on live electronics and spatial sound"></textarea><p style="font-size:12px;color:var(--text2);margin:6px 0 0;">Each line: <code>Title | explanation</code>. Omit <code>|</code> for a title only (Research page uses a default blurb for that row).</p></div>
-          <div class="btn-group"><button type="submit" class="btn btn-accent">Save About Page</button></div>
+
+          <hr class="admin-section-divider">
+
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#127891; Education</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Add your educational background entries.</p>
+          <div class="card-list" id="education-list"></div>
+          <button type="button" class="btn btn-sm" onclick="addEducationCard()">+ Add Education</button>
+
+          <hr class="admin-section-divider">
+
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#128295; Skills</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Type a skill and press Enter to add.</p>
+          <div class="tag-editor" onclick="document.querySelector('#skills-tag-editor input').focus()">
+            <div class="tags" id="skills-tags-display"></div>
+            <input type="text" id="skills-tag-input" placeholder="e.g. Max/MSP" onkeydown="return tagKeydown(event,'skills-tags-display','skills-tag-input')">
+          </div>
+
+          <hr class="admin-section-divider">
+
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#127942; Awards</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Add awards and selections one per line, or use the list editor below.</p>
+          <div class="simple-list" id="awards-list"></div>
+          <button type="button" class="btn btn-sm" onclick="addAwardItem()">+ Add Award</button>
+
+          <hr class="admin-section-divider">
+
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#128214; Research Interests</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Each entry has a title and optional explanation.</p>
+          <div class="card-list" id="research-list"></div>
+          <button type="button" class="btn btn-sm" onclick="addResearchCard()">+ Add Research Interest</button>
+
+          <div class="btn-group" style="margin-top:24px"><button type="submit" class="btn btn-accent">Save About Page</button></div>
         </form>
       </div>
 
-      <!-- SCHEDULE -->
+      <!-- ========== SCHEDULE ========== -->
       <div id="sec-schedule" class="admin-section">
         <h1>Schedule Manager</h1>
         <button class="btn btn-accent" onclick="showEventForm()">+ Add Event</button>
-        <div id="eventFormWrap" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
-          <h3 style="margin-bottom:16px;font-size:16px;" id="eventFormTitle">Add Event</h3>
+        <div id="eventFormWrap" style="display:none;margin-top:20px;border-radius:var(--radius);padding:24px">
+          <h3 style="margin-bottom:16px;font-size:16px" id="eventFormTitle">Add Event</h3>
           <form id="eventForm" onsubmit="return saveEvent(event)">
             <input type="hidden" id="ev-id">
             <div class="form-row">
@@ -258,7 +392,7 @@
         </table>
       </div>
 
-      <!-- CONTACT EDITOR -->
+      <!-- ========== CONTACT EDITOR ========== -->
       <div id="sec-contact-editor" class="admin-section">
         <h1>Contact / Press Kit Editor</h1>
         <form onsubmit="return saveContact(event)">
@@ -267,20 +401,52 @@
             <div class="form-group"><label>Artist Alias</label><input id="ct-alias"></div>
           </div>
           <div class="form-group"><label>Email</label><input id="ct-email" type="email"></div>
-          <h3 style="font-size:14px;color:var(--text2);margin:20px 0 12px;">Social Links</h3>
-          <div class="form-row">
-            <div class="form-group"><label>Instagram URL</label><input id="ct-instagram"></div>
-            <div class="form-group"><label>SoundCloud URL</label><input id="ct-soundcloud"></div>
+
+          <hr class="admin-section-divider">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#128279; Social Links</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Leave empty to hide on the public site.</p>
+          <div class="form-row-3">
+            <div class="form-group"><label>Instagram</label><input id="ct-instagram" placeholder="https://instagram.com/..."></div>
+            <div class="form-group"><label>SoundCloud</label><input id="ct-soundcloud" placeholder="https://soundcloud.com/..."></div>
+            <div class="form-group"><label>YouTube</label><input id="ct-youtube" placeholder="https://youtube.com/..."></div>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label>YouTube URL</label><input id="ct-youtube"></div>
-            <div class="form-group"><label>GitHub URL</label><input id="ct-github"></div>
+          <div class="form-row-3">
+            <div class="form-group"><label>GitHub</label><input id="ct-github" placeholder="https://github.com/..."></div>
+            <div class="form-group"><label>Bilibili</label><input id="ct-bilibili" placeholder="https://space.bilibili.com/..."></div>
+            <div class="form-group"></div>
           </div>
-          <h3 style="font-size:14px;color:var(--text2);margin:20px 0 12px;">Press Kit</h3>
-          <div class="form-group"><label>CV PDF URL</label><div class="input-with-browse"><input id="ct-cvPdfUrl"><button type="button" class="btn-browse" onclick="openMediaPicker('ct-cvPdfUrl')">Browse Media</button></div></div>
-          <div class="form-group"><label>Press Photo URL</label><div class="input-with-browse"><input id="ct-pressPhotoUrl"><button type="button" class="btn-browse" onclick="openMediaPicker('ct-pressPhotoUrl')">Browse Media</button></div></div>
+
+          <hr class="admin-section-divider">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">&#128196; Press Kit</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>CV / PDF URL</label>
+              <div class="input-with-browse">
+                <input id="ct-cvPdfUrl"><button type="button" class="btn-browse" onclick="openMediaPicker('ct-cvPdfUrl')">Browse</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Press Photo URL</label>
+              <div class="img-upload-wrap">
+                <div class="img-upload-fields">
+                  <div class="input-with-browse">
+                    <input id="ct-pressPhotoUrl" placeholder="Image URL or upload">
+                    <button type="button" class="btn-browse" onclick="openMediaPicker('ct-pressPhotoUrl')">Browse</button>
+                  </div>
+                  <div style="margin-top:6px">
+                    <label class="img-upload-btn">&#128206; Upload
+                      <input type="file" accept="image/*" onchange="uploadAndFill('ct-pressPhotoUrl',this)">
+                    </label>
+                  </div>
+                </div>
+                <div class="img-preview" id="preview-ct-pressPhotoUrl">
+                  <span class="placeholder">No image</span>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="form-group"><label>Short Bio</label><textarea id="ct-shortBio"></textarea></div>
-          <div class="form-group"><label>Long Bio</label><textarea id="ct-longBio" style="min-height:120px"></textarea></div>
+          <div class="form-group"><label>Long Bio</label><textarea id="ct-longBio" class="lg"></textarea></div>
           <div class="btn-group"><button type="submit" class="btn btn-accent">Save Contact Info</button></div>
         </form>
       </div>
@@ -307,7 +473,239 @@
     let mediaData = [];
     let scheduleData = [];
 
-    // NAV
+    // ==============================
+    //  TAG EDITOR (shared component)
+    // ==============================
+    function getTags(displayId) {
+      const items = document.querySelectorAll('#' + displayId + ' .tag');
+      return Array.from(items).map(el => el.textContent.replace(/[×✕]$/,'').trim()).filter(Boolean);
+    }
+    function setTags(displayId, inputId, tags) {
+      const container = document.getElementById(displayId);
+      container.innerHTML = tags.map(t => `<span class="tag">${escapeHtml(t)}<span class="tag-remove" onclick="this.parentElement.remove()">&#10005;</span></span>`).join('');
+    }
+    function tagKeydown(e, displayId, inputId) {
+      const input = document.getElementById(inputId);
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = input.value.trim();
+        if (!val) return;
+        const existing = getTags(displayId);
+        if (!existing.includes(val)) {
+          const container = document.getElementById(displayId);
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.innerHTML = escapeHtml(val) + '<span class="tag-remove" onclick="this.parentElement.remove()">&#10005;</span>';
+          container.appendChild(tag);
+        }
+        input.value = '';
+      }
+      if (e.key === 'Backspace' && input.value === '') {
+        const container = document.getElementById(displayId);
+        const last = container.lastElementChild;
+        if (last) last.remove();
+      }
+    }
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ==============================
+    //  IMAGE UPLOAD + PREVIEW
+    // ==============================
+    async function uploadAndFill(inputId, fileInput) {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('category', 'general');
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.path) {
+          document.getElementById(inputId).value = data.path;
+          updatePreview(inputId, data.path);
+          toast('Image uploaded!', 'success');
+          // Refresh media
+          const mr = await fetch('/api/media'); mediaData = await mr.json(); renderMedia();
+        }
+      } catch (e) { toast('Upload failed: ' + e.message, 'error'); }
+      fileInput.value = '';
+    }
+
+    function updatePreview(inputId, url) {
+      const preview = document.getElementById('preview-' + inputId);
+      if (!preview) return;
+      if (url) {
+        preview.innerHTML = '<img src="' + escapeHtml(url) + '" alt="" onerror="this.parentElement.innerHTML=\'<span class=placeholder>Load error</span>\'"><button class="btn-remove-img" onclick="clearImage(\'' + inputId + '\')">&#10005;</button>';
+      } else {
+        preview.innerHTML = '<span class="placeholder">No image</span>';
+      }
+    }
+
+    function clearImage(inputId) {
+      document.getElementById(inputId).value = '';
+      updatePreview(inputId, '');
+    }
+
+    // ==============================
+    //  EDUCATION CARDS
+    // ==============================
+    let eduData = [];
+
+    function renderEducationCards() {
+      const list = document.getElementById('education-list');
+      list.innerHTML = eduData.map((e, i) => `
+        <div class="repeat-card">
+          <div class="card-header">
+            <span class="card-label">Education #${i+1}</span>
+            <button type="button" class="btn-remove" onclick="removeEducation(${i})">&#10005;</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>School / Institution</label><input class="edu-field" data-idx="${i}" data-field="institution" value="${escapeHtml(e.institution||'')}"></div>
+            <div class="form-group"><label>Degree</label><input class="edu-field" data-idx="${i}" data-field="degree" value="${escapeHtml(e.degree||'')}"></div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group"><label>Major / Field</label><input class="edu-field" data-idx="${i}" data-field="major" value="${escapeHtml(e.major||'')}"></div>
+            <div class="form-group"><label>Location</label><input class="edu-field" data-idx="${i}" data-field="location" value="${escapeHtml(e.location||'')}"></div>
+            <div class="form-group"><label>Years</label><input class="edu-field" data-idx="${i}" data-field="years" value="${escapeHtml(e.years||'')}" placeholder="2023–Present"></div>
+          </div>
+          <div class="form-group"><label>Description</label><input class="edu-field" data-idx="${i}" data-field="description" value="${escapeHtml(e.description||'')}" placeholder="Optional"></div>
+        </div>
+      `).join('');
+      // Bind change events to keep eduData in sync
+      list.querySelectorAll('.edu-field').forEach(el => {
+        el.addEventListener('input', function() {
+          const idx = parseInt(this.dataset.idx);
+          const field = this.dataset.field;
+          if (!eduData[idx]) eduData[idx] = {};
+          eduData[idx][field] = this.value;
+        });
+      });
+    }
+
+    function addEducationCard() {
+      eduData.push({ institution: '', degree: '', major: '', location: '', years: '', description: '' });
+      renderEducationCards();
+    }
+
+    function removeEducation(idx) {
+      eduData.splice(idx, 1);
+      renderEducationCards();
+    }
+
+    function collectEducation() {
+      // Sync from DOM
+      document.querySelectorAll('.edu-field').forEach(el => {
+        const idx = parseInt(el.dataset.idx);
+        const field = el.dataset.field;
+        if (!eduData[idx]) eduData[idx] = {};
+        eduData[idx][field] = el.value;
+      });
+      return eduData.map(e => {
+        const obj = {};
+        if (e.institution) obj.institution = e.institution;
+        if (e.degree) obj.degree = e.degree;
+        if (e.major) obj.major = e.major;
+        if (e.location) obj.location = e.location;
+        if (e.years) obj.years = e.years;
+        if (e.description) obj.description = e.description;
+        return obj;
+      });
+    }
+
+    // ==============================
+    //  AWARDS LIST
+    // ==============================
+    let awardsData = [];
+
+    function renderAwardsList() {
+      const list = document.getElementById('awards-list');
+      list.innerHTML = awardsData.map((a, i) => `
+        <div class="simple-list-item">
+          <input class="award-field" data-idx="${i}" value="${escapeHtml(a)}" placeholder="Award or selection">
+          <button type="button" class="btn-remove-item" onclick="removeAward(${i})">&#10005;</button>
+        </div>
+      `).join('');
+      list.querySelectorAll('.award-field').forEach(el => {
+        el.addEventListener('input', function() {
+          awardsData[parseInt(this.dataset.idx)] = this.value;
+        });
+      });
+    }
+
+    function addAwardItem() {
+      awardsData.push('');
+      renderAwardsList();
+    }
+
+    function removeAward(idx) {
+      awardsData.splice(idx, 1);
+      renderAwardsList();
+    }
+
+    function collectAwards() {
+      return awardsData.filter(a => a.trim());
+    }
+
+    // ==============================
+    //  RESEARCH INTERESTS CARDS
+    // ==============================
+    let researchData = [];
+
+    function renderResearchCards() {
+      const list = document.getElementById('research-list');
+      list.innerHTML = researchData.map((r, i) => `
+        <div class="repeat-card">
+          <div class="card-header">
+            <span class="card-label">Research Interest #${i+1}</span>
+            <button type="button" class="btn-remove" onclick="removeResearch(${i})">&#10005;</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Title</label><input class="research-field" data-idx="${i}" data-field="title" value="${escapeHtml(r.title||'')}"></div>
+            <div class="form-group"><label>Explanation</label><input class="research-field" data-idx="${i}" data-field="explanation" value="${escapeHtml(r.explanation||'')}"></div>
+          </div>
+        </div>
+      `).join('');
+      list.querySelectorAll('.research-field').forEach(el => {
+        el.addEventListener('input', function() {
+          const idx = parseInt(this.dataset.idx);
+          const field = this.dataset.field;
+          if (!researchData[idx]) researchData[idx] = {};
+          researchData[idx][field] = this.value;
+        });
+      });
+    }
+
+    function addResearchCard() {
+      researchData.push({ title: '', explanation: '' });
+      renderResearchCards();
+    }
+
+    function removeResearch(idx) {
+      researchData.splice(idx, 1);
+      renderResearchCards();
+    }
+
+    function collectResearch() {
+      document.querySelectorAll('.research-field').forEach(el => {
+        const idx = parseInt(el.dataset.idx);
+        const field = el.dataset.field;
+        if (!researchData[idx]) researchData[idx] = {};
+        researchData[idx][field] = el.value;
+      });
+      return researchData.map(r => {
+        if (!r.title && !r.explanation) return null;
+        if (r.title && r.explanation) return { title: r.title.trim(), explanation: r.explanation.trim() };
+        return r.title || r.explanation || '';
+      }).filter(Boolean);
+    }
+
+    // ==============================
+    //  NAVIGATION
+    // ==============================
     document.querySelectorAll('.admin-nav a[data-section]').forEach(a => {
       a.addEventListener('click', e => {
         e.preventDefault();
@@ -318,7 +716,9 @@
       });
     });
 
-    // TOAST
+    // ==============================
+    //  TOAST
+    // ==============================
     function toast(msg, type) {
       const el = document.getElementById('toast');
       el.textContent = msg;
@@ -326,7 +726,9 @@
       setTimeout(() => el.className = 'toast', 3000);
     }
 
-    // SEED
+    // ==============================
+    //  SEED
+    // ==============================
     async function seedData() {
       try {
         const res = await fetch('/api/seed', { method: 'POST' });
@@ -340,7 +742,9 @@
       } catch (e) { toast('Seed failed: ' + e.message, 'error'); }
     }
 
-    // LOAD ALL
+    // ==============================
+    //  LOAD ALL
+    // ==============================
     async function loadAll() {
       try {
         const [siteRes, worksRes, mediaRes, schedRes] = await Promise.all([
@@ -360,31 +764,32 @@
       populateContactEditor();
     }
 
-    // STATS
+    // ==============================
+    //  STATS
+    // ==============================
     function renderStats() {
-      document.getElementById('stats').innerHTML = `
-        <div class="stat-card"><div class="num">${worksData.length}</div><div class="lbl">Works</div></div>
-        <div class="stat-card"><div class="num">${worksData.filter(w=>w.featured).length}</div><div class="lbl">Featured</div></div>
-        <div class="stat-card"><div class="num">${mediaData.length}</div><div class="lbl">Media Files</div></div>
-        <div class="stat-card"><div class="num">${scheduleData.length}</div><div class="lbl">Events</div></div>
-      `;
+      document.getElementById('stats').innerHTML = [
+        '<div class="stat-card"><div class="num">' + worksData.length + '</div><div class="lbl">Works</div></div>',
+        '<div class="stat-card"><div class="num">' + worksData.filter(function(w){return w.featured}).length + '</div><div class="lbl">Featured</div></div>',
+        '<div class="stat-card"><div class="num">' + mediaData.length + '</div><div class="lbl">Media Files</div></div>',
+        '<div class="stat-card"><div class="num">' + scheduleData.length + '</div><div class="lbl">Events</div></div>'
+      ].join('');
     }
 
-    // === WORKS ===
+    // ==============================
+    //  WORKS
+    // ==============================
     function renderWorks() {
-      const tbody = document.getElementById('worksBody');
-      tbody.innerHTML = worksData.map(w => `
-        <tr>
-          <td><strong>${w.title}</strong>${w.medium ? '<br><span style="font-size:11px;color:var(--text3)">'+w.medium+'</span>' : ''}</td>
-          <td>${w.year || ''}</td>
-          <td>${w.category || ''}</td>
-          <td>${w.featured ? '<span class="badge badge-accent">Featured</span>' : ''}</td>
-          <td>
-            <button class="btn btn-sm" onclick="editWork(${w.id})">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteWork(${w.id})">Delete</button>
-          </td>
-        </tr>
-      `).join('');
+      var tbody = document.getElementById('worksBody');
+      tbody.innerHTML = worksData.map(function(w) {
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(w.title) + '</strong>' + (w.medium ? '<br><span style="font-size:11px;color:var(--text3)">' + escapeHtml(w.medium) + '</span>' : '') + '</td>' +
+          '<td>' + (w.year || '') + '</td>' +
+          '<td>' + escapeHtml(w.category || '') + '</td>' +
+          '<td>' + (w.featured ? '<span class="badge badge-accent">Featured</span>' : '') + '</td>' +
+          '<td><button class="btn btn-sm" onclick="editWork(' + w.id + ')">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteWork(' + w.id + ')">Delete</button></td>' +
+          '</tr>';
+      }).join('');
     }
 
     function showWorkForm(work) {
@@ -396,16 +801,18 @@
       document.getElementById('wk-category').value = work ? (work.category || '') : '';
       document.getElementById('wk-medium').value = work ? (work.medium || '') : '';
       document.getElementById('wk-description').value = work ? (work.description || '') : '';
-      document.getElementById('wk-programNote').value = work ? (work.program_note || '') : '';
-      document.getElementById('wk-premiereInfo').value = work ? (work.premiere_info || '') : '';
-      document.getElementById('wk-festivalSelections').value = work ? (work.festival_selections || '') : '';
-      document.getElementById('wk-youtubeUrl').value = work ? (work.youtube_url || '') : '';
-      document.getElementById('wk-soundcloudUrl').value = work ? (work.soundcloud_url || '') : '';
-      document.getElementById('wk-audioUrl').value = work ? (work.audio_url || '') : '';
-      document.getElementById('wk-scorePdfUrl').value = work ? (work.score_pdf_url || '') : '';
-      document.getElementById('wk-coverImage').value = work ? (work.cover_image || '') : '';
-      const tags = work ? (typeof work.tags === 'string' ? JSON.parse(work.tags || '[]') : (work.tags || [])) : [];
-      document.getElementById('wk-tags').value = tags.join(', ');
+      document.getElementById('wk-programNote').value = work ? (work.program_note || work.programNote || '') : '';
+      document.getElementById('wk-premiereInfo').value = work ? (work.premiere_info || work.premiereInfo || '') : '';
+      document.getElementById('wk-festivalSelections').value = work ? (work.festival_selections || work.festivalSelections || '') : '';
+      document.getElementById('wk-youtubeUrl').value = work ? (work.youtube_url || work.youtubeUrl || '') : '';
+      document.getElementById('wk-soundcloudUrl').value = work ? (work.soundcloud_url || work.soundcloudUrl || '') : '';
+      document.getElementById('wk-audioUrl').value = work ? (work.audio_url || work.audioUrl || '') : '';
+      document.getElementById('wk-scorePdfUrl').value = work ? (work.score_pdf_url || work.scorePdfUrl || '') : '';
+      var coverUrl = work ? (work.cover_image || work.coverImage || '') : '';
+      document.getElementById('wk-coverImage').value = coverUrl;
+      updatePreview('wk-coverImage', coverUrl);
+      var tags = work ? (Array.isArray(work.tags) ? work.tags : []) : [];
+      setTags('wk-tags-display', 'wk-tag-input', tags);
       document.getElementById('wk-featured').checked = work ? work.featured : false;
     }
 
@@ -416,14 +823,14 @@
     }
 
     function editWork(id) {
-      const w = worksData.find(x => x.id === id);
+      var w = worksData.find(function(x) { return x.id === id; });
       if (w) showWorkForm(w);
     }
 
     async function saveWork(e) {
       e.preventDefault();
-      const id = document.getElementById('wk-id').value;
-      const body = {
+      var id = document.getElementById('wk-id').value;
+      var body = {
         title: document.getElementById('wk-title').value,
         year: document.getElementById('wk-year').value,
         category: document.getElementById('wk-category').value,
@@ -437,16 +844,16 @@
         audioUrl: document.getElementById('wk-audioUrl').value,
         scorePdfUrl: document.getElementById('wk-scorePdfUrl').value,
         coverImage: document.getElementById('wk-coverImage').value,
-        tags: document.getElementById('wk-tags').value.split(',').map(t => t.trim()).filter(Boolean),
-        featured: document.getElementById('wk-featured').checked,
+        tags: getTags('wk-tags-display'),
+        featured: document.getElementById('wk-featured').checked
       };
       try {
-        const url = id ? '/api/works/' + id : '/api/works';
-        const method = id ? 'PUT' : 'POST';
-        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        var url = id ? '/api/works/' + id : '/api/works';
+        var method = id ? 'PUT' : 'POST';
+        await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         toast('Work saved!', 'success');
         hideWorkForm();
-        const res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
+        var res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
       } catch (e) { toast('Error: ' + e.message, 'error'); }
       return false;
     }
@@ -456,58 +863,57 @@
       try {
         await fetch('/api/works/' + id, { method: 'DELETE' });
         toast('Work deleted', 'success');
-        const res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
+        var res = await fetch('/api/works'); worksData = await res.json(); renderWorks(); renderStats();
       } catch (e) { toast('Error: ' + e.message, 'error'); }
     }
 
-    // === MEDIA ===
+    // ==============================
+    //  MEDIA
+    // ==============================
     function renderMedia() {
-      const grid = document.getElementById('mediaGrid');
-      grid.innerHTML = mediaData.map(m => `
-        <div class="media-item" title="${m.originalName || m.key}">
-          <img src="${m.url}" alt="${m.originalName || ''}">
-          <button class="del" onclick="event.stopPropagation();deleteMedia('${m.key}')">&times;</button>
-        </div>
-      `).join('');
+      var grid = document.getElementById('mediaGrid');
+      grid.innerHTML = mediaData.map(function(m) {
+        return '<div class="media-item" title="' + escapeHtml(m.originalName || m.key) + '">' +
+          '<img src="' + m.url + '" alt="' + escapeHtml(m.originalName || '') + '">' +
+          '<button class="del" onclick="event.stopPropagation();deleteMedia(\'' + m.key + '\')">&times;</button></div>';
+      }).join('');
       if (mediaData.length === 0) grid.innerHTML = '<p style="color:var(--text3);font-size:13px;">No media uploaded yet.</p>';
     }
 
     document.getElementById('fileInput').addEventListener('change', async function() {
-      const files = this.files;
-      const cat = document.getElementById('uploadCat').value;
-      const status = document.getElementById('uploadStatus');
-      for (let i = 0; i < files.length; i++) {
-        status.textContent = `Uploading ${i + 1} of ${files.length}...`;
-        const fd = new FormData();
+      var files = this.files;
+      var cat = document.getElementById('uploadCat').value;
+      var status = document.getElementById('uploadStatus');
+      for (var i = 0; i < files.length; i++) {
+        status.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '...';
+        var fd = new FormData();
         fd.append('file', files[i]);
         fd.append('category', cat);
         try {
-          const res = await fetch('/api/upload', { method: 'POST', body: fd });
-          const data = await res.json();
+          var res = await fetch('/api/upload', { method: 'POST', body: fd });
+          var data = await res.json();
           if (data.path) toast('Uploaded: ' + data.path, 'success');
         } catch (e) { toast('Upload failed', 'error'); }
       }
       status.textContent = 'Upload complete!';
-      const res = await fetch('/api/media'); mediaData = await res.json(); renderMedia(); renderStats();
+      var mr = await fetch('/api/media'); mediaData = await mr.json(); renderMedia(); renderStats();
       this.value = '';
     });
 
-    // === MEDIA PICKER ===
-    let _mediaPickerTarget = null;
+    // MEDIA PICKER
+    var _mediaPickerTarget = null;
 
     function openMediaPicker(targetInputId) {
       _mediaPickerTarget = document.getElementById(targetInputId);
       if (!_mediaPickerTarget) return;
-      const grid = document.getElementById('mediaPickerGrid');
-      const overlay = document.getElementById('mediaPickerOverlay');
+      var grid = document.getElementById('mediaPickerGrid');
+      var overlay = document.getElementById('mediaPickerOverlay');
       if (mediaData.length === 0) {
         grid.innerHTML = '<div class="media-picker-empty">No media uploaded yet. Go to <strong>Media Manager</strong> to upload images first.</div>';
       } else {
-        grid.innerHTML = mediaData.map(m => `
-          <div class="media-picker-item" onclick="selectMedia('${m.url.replace(/'/g, "\\'")}')">
-            <img src="${m.url}" alt="${m.originalName || ''}" loading="lazy">
-          </div>
-        `).join('');
+        grid.innerHTML = mediaData.map(function(m) {
+          return '<div class="media-picker-item" onclick="selectMedia(\'' + m.url.replace(/'/g, "\\'") + '\')"><img src="' + m.url + '" alt="' + escapeHtml(m.originalName || '') + '" loading="lazy"></div>';
+        }).join('');
       }
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -517,6 +923,8 @@
       if (_mediaPickerTarget) {
         _mediaPickerTarget.value = url;
         _mediaPickerTarget.dispatchEvent(new Event('input', { bubbles: true }));
+        // Also update preview if it exists
+        updatePreview(_mediaPickerTarget.id, url);
       }
       closeMediaPicker();
     }
@@ -536,106 +944,110 @@
       try {
         await fetch('/api/media?key=' + encodeURIComponent(key), { method: 'DELETE' });
         toast('Deleted', 'success');
-        const res = await fetch('/api/media'); mediaData = await res.json(); renderMedia(); renderStats();
+        var res = await fetch('/api/media'); mediaData = await res.json(); renderMedia(); renderStats();
       } catch (e) { toast('Error: ' + e.message, 'error'); }
     }
 
-    // === HOME EDITOR ===
+    // ==============================
+    //  HOME EDITOR
+    // ==============================
     function populateHomeEditor() {
-      const h = siteData.hero || {};
+      var h = siteData.hero || {};
       document.getElementById('he-displayName').value = h.displayName || '';
       document.getElementById('he-alias').value = h.alias || '';
       document.getElementById('he-subtitle').value = h.subtitle || '';
       document.getElementById('he-statement').value = h.statement || '';
-      document.getElementById('he-heroImage').value = h.heroImage || '';
-      document.getElementById('he-portraitImage').value = h.portraitImage || '';
+      var heroImg = h.heroImage || h.hero_image || '';
+      document.getElementById('he-heroImage').value = heroImg;
+      updatePreview('he-heroImage', heroImg);
+      var portraitImg = h.portraitImage || h.portrait_image || '';
+      document.getElementById('he-portraitImage').value = portraitImg;
+      updatePreview('he-portraitImage', portraitImg);
     }
 
     async function saveHome(e) {
       e.preventDefault();
-      const hero = {
+      var hero = {
         displayName: document.getElementById('he-displayName').value,
         alias: document.getElementById('he-alias').value,
         subtitle: document.getElementById('he-subtitle').value,
         statement: document.getElementById('he-statement').value,
         heroImage: document.getElementById('he-heroImage').value,
-        portraitImage: document.getElementById('he-portraitImage').value,
+        portraitImage: document.getElementById('he-portraitImage').value
       };
       try {
-        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hero }) });
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hero: hero }) });
         toast('Home page saved!', 'success');
         siteData.hero = hero;
       } catch (e) { toast('Error: ' + e.message, 'error'); }
       return false;
     }
 
-    // === ABOUT EDITOR ===
+    // ==============================
+    //  ABOUT EDITOR
+    // ==============================
     function populateAboutEditor() {
-      const a = siteData.about || {};
+      var a = siteData.about || {};
       document.getElementById('ab-biography').value = a.biography || '';
       document.getElementById('ab-artisticStatement').value = a.artisticStatement || '';
       document.getElementById('ab-aliasExplanation').value = a.aliasExplanation || '';
-      document.getElementById('ab-education').value = JSON.stringify(a.education || [], null, 2);
-      document.getElementById('ab-skills').value = (a.skills || []).join(', ');
-      document.getElementById('ab-awards').value = (a.awards || []).join('\n');
-      document.getElementById('ab-researchInterests').value = (a.researchInterests || [])
-        .map((r) => {
-          if (typeof r === 'string') return r;
-          const t = (r.title || r.name || '').trim();
-          const e = (r.explanation || r.desc || '').trim();
-          return e ? t + ' | ' + e : t;
-        })
-        .join('\n');
+
+      // Education
+      eduData = (a.education || []).map(function(e) {
+        if (typeof e === 'string') return { institution: e, degree: '', major: '', location: '', years: '', description: '' };
+        return { institution: e.institution || '', degree: e.degree || '', major: e.major || '', location: e.location || '', years: e.years || '', description: e.description || '' };
+      });
+      renderEducationCards();
+
+      // Skills (tag editor)
+      var skills = Array.isArray(a.skills) ? a.skills : [];
+      setTags('skills-tags-display', 'skills-tag-input', skills);
+
+      // Awards
+      awardsData = Array.isArray(a.awards) ? a.awards.slice() : [];
+      renderAwardsList();
+
+      // Research interests
+      researchData = (a.researchInterests || []).map(function(r) {
+        if (typeof r === 'string') return { title: r, explanation: '' };
+        return { title: r.title || r.name || '', explanation: r.explanation || r.desc || '' };
+      });
+      renderResearchCards();
     }
 
     async function saveAbout(e) {
       e.preventDefault();
-      let education;
-      try { education = JSON.parse(document.getElementById('ab-education').value); } catch { toast('Invalid education JSON', 'error'); return false; }
-      const about = {
+      var about = {
         biography: document.getElementById('ab-biography').value,
         artisticStatement: document.getElementById('ab-artisticStatement').value,
         aliasExplanation: document.getElementById('ab-aliasExplanation').value,
-        education,
-        skills: document.getElementById('ab-skills').value.split(',').map(s => s.trim()).filter(Boolean),
-        awards: document.getElementById('ab-awards').value.split('\n').map(s => s.trim()).filter(Boolean),
-        researchInterests: document.getElementById('ab-researchInterests').value
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .map((line) => {
-            const i = line.indexOf('|');
-            if (i === -1) return line;
-            const title = line.slice(0, i).trim();
-            const explanation = line.slice(i + 1).trim();
-            if (!title) return line;
-            if (!explanation) return title;
-            return { title, explanation };
-          }),
+        education: collectEducation(),
+        skills: getTags('skills-tags-display'),
+        awards: collectAwards(),
+        researchInterests: collectResearch()
       };
       try {
-        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ about }) });
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ about: about }) });
         toast('About page saved!', 'success');
         siteData.about = about;
       } catch (e) { toast('Error: ' + e.message, 'error'); }
       return false;
     }
 
-    // === SCHEDULE ===
+    // ==============================
+    //  SCHEDULE
+    // ==============================
     function renderEvents() {
-      const tbody = document.getElementById('eventsBody');
-      tbody.innerHTML = scheduleData.map(ev => `
-        <tr>
-          <td>${ev.event_date || ev.eventDate || ''}</td>
-          <td>${ev.title}</td>
-          <td>${ev.venue || ''}</td>
-          <td>${ev.city_country || ev.cityCountry || ''}</td>
-          <td>
-            <button class="btn btn-sm" onclick="editEvent(${ev.id})">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteEvent(${ev.id})">Delete</button>
-          </td>
-        </tr>
-      `).join('');
+      var tbody = document.getElementById('eventsBody');
+      tbody.innerHTML = scheduleData.map(function(ev) {
+        return '<tr>' +
+          '<td>' + (ev.event_date || ev.eventDate || '') + '</td>' +
+          '<td>' + escapeHtml(ev.title) + '</td>' +
+          '<td>' + escapeHtml(ev.venue || '') + '</td>' +
+          '<td>' + escapeHtml(ev.city_country || ev.cityCountry || '') + '</td>' +
+          '<td><button class="btn btn-sm" onclick="editEvent(' + ev.id + ')">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteEvent(' + ev.id + ')">Delete</button></td>' +
+          '</tr>';
+      }).join('');
     }
 
     function showEventForm(ev) {
@@ -657,28 +1069,28 @@
     }
 
     function editEvent(id) {
-      const ev = scheduleData.find(x => x.id === id);
+      var ev = scheduleData.find(function(x) { return x.id === id; });
       if (ev) showEventForm(ev);
     }
 
     async function saveEvent(e) {
       e.preventDefault();
-      const id = document.getElementById('ev-id').value;
-      const body = {
+      var id = document.getElementById('ev-id').value;
+      var body = {
         eventDate: document.getElementById('ev-date').value,
         title: document.getElementById('ev-title').value,
         venue: document.getElementById('ev-venue').value,
         cityCountry: document.getElementById('ev-cityCountry').value,
         workPerformed: document.getElementById('ev-workPerformed').value,
-        link: document.getElementById('ev-link').value,
+        link: document.getElementById('ev-link').value
       };
       try {
-        const url = id ? '/api/schedule/' + id : '/api/schedule';
-        const method = id ? 'PUT' : 'POST';
-        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        var url = id ? '/api/schedule/' + id : '/api/schedule';
+        var method = id ? 'PUT' : 'POST';
+        await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         toast('Event saved!', 'success');
         hideEventForm();
-        const res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
+        var res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
       } catch (e) { toast('Error: ' + e.message, 'error'); }
       return false;
     }
@@ -688,30 +1100,35 @@
       try {
         await fetch('/api/schedule/' + id, { method: 'DELETE' });
         toast('Event deleted', 'success');
-        const res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
+        var res = await fetch('/api/schedule'); scheduleData = await res.json(); renderEvents(); renderStats();
       } catch (e) { toast('Error: ' + e.message, 'error'); }
     }
 
-    // === CONTACT EDITOR ===
+    // ==============================
+    //  CONTACT EDITOR
+    // ==============================
     function populateContactEditor() {
-      const c = siteData.contact || {};
+      var c = siteData.contact || {};
       document.getElementById('ct-displayName').value = c.displayName || '';
       document.getElementById('ct-alias').value = c.alias || '';
       document.getElementById('ct-email').value = c.email || '';
-      const sl = c.socialLinks || {};
+      var sl = c.socialLinks || {};
       document.getElementById('ct-instagram').value = sl.instagram || '';
       document.getElementById('ct-soundcloud').value = sl.soundcloud || '';
       document.getElementById('ct-youtube').value = sl.youtube || '';
       document.getElementById('ct-github').value = sl.github || '';
+      document.getElementById('ct-bilibili').value = sl.bilibili || '';
       document.getElementById('ct-cvPdfUrl').value = c.cvPdfUrl || '';
-      document.getElementById('ct-pressPhotoUrl').value = c.pressPhotoUrl || '';
+      var pressPhoto = c.pressPhotoUrl || '';
+      document.getElementById('ct-pressPhotoUrl').value = pressPhoto;
+      updatePreview('ct-pressPhotoUrl', pressPhoto);
       document.getElementById('ct-shortBio').value = c.shortBio || '';
       document.getElementById('ct-longBio').value = c.longBio || '';
     }
 
     async function saveContact(e) {
       e.preventDefault();
-      const contact = {
+      var contact = {
         displayName: document.getElementById('ct-displayName').value,
         alias: document.getElementById('ct-alias').value,
         email: document.getElementById('ct-email').value,
@@ -720,21 +1137,24 @@
           soundcloud: document.getElementById('ct-soundcloud').value,
           youtube: document.getElementById('ct-youtube').value,
           github: document.getElementById('ct-github').value,
+          bilibili: document.getElementById('ct-bilibili').value
         },
         cvPdfUrl: document.getElementById('ct-cvPdfUrl').value,
         pressPhotoUrl: document.getElementById('ct-pressPhotoUrl').value,
         shortBio: document.getElementById('ct-shortBio').value,
-        longBio: document.getElementById('ct-longBio').value,
+        longBio: document.getElementById('ct-longBio').value
       };
       try {
-        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact }) });
+        await fetch('/api/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: contact }) });
         toast('Contact info saved!', 'success');
         siteData.contact = contact;
       } catch (e) { toast('Error: ' + e.message, 'error'); }
       return false;
     }
 
-    // INIT
+    // ==============================
+    //  INIT
+    // ==============================
     loadAll();
   </script>
 </body>
