@@ -275,9 +275,36 @@
     },
     "about": {
       "biography": "Qin Faming (Populian) is a Chinese composer, sound artist, and multimedia creator currently studying Electronic Music Composition at Xi’an Conservatory of Music. His work focuses on electroacoustic music, interactive performance systems, sound design, and cross-media composition, with a particular interest in the relationships between body, space, technology, and perception.\n\nHis artistic practice combines electronic sound, instrumental textures, spatial audio, and algorithmic interaction, exploring the fluid boundaries between reality and virtuality. Through fragmentation, looping, distortion, and reconstruction, he creates immersive sonic environments that emphasize psychological space and temporal transformation.\n\nAlongside composition, he actively explores emerging technologies in artistic creation, working with Max/MSP, Kyma, SuperCollider, Ableton Live, Python, and sensor-based systems for real-time interaction and sound research. Through his work, he seeks to develop a contemporary sonic language that balances technical experimentation with emotional and poetic depth.",
-      "education": [],
-      "skills": [],
-      "awards": [],
+      "education": [
+        {
+          "institution": "Xi'an Conservatory of Music",
+          "degree": "Bachelor of Music in Electroacoustic Composition",
+          "years": "2023–Present"
+        },
+        {
+          "institution": "University of Oregon – Future Music Oregon Summer Academy",
+          "degree": "Kyma System Coursework",
+          "years": ""
+        }
+      ],
+      "skills": [
+        "Max/MSP",
+        "Ableton Live",
+        "Kyma",
+        "Logic Pro",
+        "Pro Tools",
+        "VCV Rack",
+        "Python",
+        "Interactive Media",
+        "AI + Music Systems",
+        "Sound Design"
+      ],
+      "awards": [
+        "ICMC 2026 Selection",
+        "SEAMUS 2026 Selection",
+        "CCMC Futura Award",
+        "China Collegiate Computing Competition Third Prize"
+      ],
       "researchInterests": [
         {
           "title": "Electroacoustic Music Composition",
@@ -307,7 +334,44 @@
       "alias": "Faming Qin"
     }
   },
-  "schedule": [],
+  "schedule": [
+    {
+      "id": 1,
+      "eventDate": "2026-06-15",
+      "title": "NYCEMF 2026 — Electroacoustic Music Festival",
+      "venue": "New York City Electroacoustic Music Festival",
+      "cityCountry": "New York, USA",
+      "workPerformed": "A Voice Intolerable to Heaven and Earth",
+      "link": ""
+    },
+    {
+      "id": 2,
+      "eventDate": "2026-07-22",
+      "title": "ICMC 2026 — International Computer Music Conference",
+      "venue": "Hamburg University of Music and Theatre",
+      "cityCountry": "Hamburg, Germany",
+      "workPerformed": "A Voice Intolerable to Heaven and Earth",
+      "link": ""
+    },
+    {
+      "id": 3,
+      "eventDate": "2026-09-10",
+      "title": "SEAMUS 2026 National Conference",
+      "venue": "Virginia Tech",
+      "cityCountry": "Blacksburg, VA, USA",
+      "workPerformed": "1/2",
+      "link": ""
+    },
+    {
+      "id": 4,
+      "eventDate": "2026-05-01",
+      "title": "CCMC Futura — Computer Music Conference",
+      "venue": "Kyoto University",
+      "cityCountry": "Kyoto, Japan",
+      "workPerformed": "A Voice Intolerable to Heaven and Earth",
+      "link": ""
+    }
+  ],
   "media": [
     {
       "key": "1778921549472-957124129.jpg",

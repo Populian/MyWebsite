@@ -182,17 +182,22 @@ h1, h2, h3, h4, h5 {
     linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(252, 250, 255, 0.75) 45%, rgba(245, 240, 252, 0.5) 100%);
 }
 
-/* ─── HERO ANIMATIONS (refined, subtle) ─── */
+/* ─── HERO ANIMATIONS (cinematic, refined) ─── */
 @keyframes heroGradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
+@keyframes heroBreath {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.012); opacity: 0.92; }
+}
+
 @keyframes heroFadeUp {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
@@ -205,24 +210,60 @@ h1, h2, h3, h4, h5 {
   to { opacity: 1; }
 }
 
+@keyframes heroDrift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes heroGlowPulse {
+  0%, 100% { box-shadow: 0 1px 0 rgba(255, 255, 255, 1) inset, 0 20px 50px rgba(60, 55, 95, 0.06); }
+  50% { box-shadow: 0 1px 0 rgba(255, 255, 255, 1) inset, 0 20px 60px rgba(100, 95, 160, 0.12), 0 0 40px rgba(120, 110, 200, 0.04); }
+}
+
+@keyframes heroReveal {
+  0% { opacity: 0; clip-path: inset(0 100% 0 0); }
+  40% { opacity: 1; clip-path: inset(0 0% 0 0); }
+  100% { opacity: 1; clip-path: inset(0 0% 0 0); }
+}
+
 @keyframes scrollPulse {
   0%, 100% { opacity: 0.5; transform: translateY(0) translateX(-50%); }
   50% { opacity: 1; transform: translateY(6px) translateX(-50%); }
 }
 
+@keyframes heroDividerPulse {
+  0%, 100% { width: min(72px, 18vw); opacity: 0.6; }
+  50% { width: min(96px, 24vw); opacity: 1; }
+}
+
 .hero--home .hero-bg {
   background-size: 200% 200%;
-  animation: heroGradientShift 28s ease-in-out infinite;
+  animation: heroGradientShift 28s ease-in-out infinite, heroBreath 14s ease-in-out infinite;
 }
 
 .hero--home .hero-content {
-  animation: heroFadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s both;
+  animation: heroFadeUp 1.2s cubic-bezier(0.2, 0.6, 0.3, 1) 0.15s both, heroGlowPulse 8s ease-in-out 1.6s infinite;
 }
 
 .hero--home .hero-photo-wrap {
-  animation: heroFadeUp 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) 0.4s both;
+  animation: heroFadeUp 1.4s cubic-bezier(0.2, 0.6, 0.3, 1) 0.3s both, heroDrift 12s ease-in-out 2s infinite;
 }
 
+.hero--home .hero-name {
+  animation: heroReveal 1.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s both;
+}
+
+.hero--home .hero-alias {
+  animation: heroFadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.4s both;
+}
+
+.hero--home .hero-subtitle {
+  animation: heroFadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.6s both;
+}
+
+.hero--home .hero-statement {
+  animation: heroFadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.8s both;
+}
 /* Scroll indicator */
 .hero-scroll-indicator {
   position: absolute;
@@ -548,6 +589,7 @@ h1, h2, h3, h4, h5 {
 .hero--home .hero-divider {
   margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
   margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+  animation: heroFadeIn 1s ease 0.5s both, heroDividerPulse 6s ease-in-out 2s infinite;
 }
 
 .hero--has-photo .hero-divider {

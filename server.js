@@ -267,6 +267,16 @@ function migrateWorksInPlace(works) {
 
 function migrateScheduleInPlace(schedule) {
   let migrated = false;
+  // Auto-seed schedule if empty (restore lost schedule data)
+  if (schedule.length === 0 && typeof SEED_SCHEDULE !== 'undefined') {
+    let nextId = 0;
+    for (const ev of SEED_SCHEDULE) {
+      nextId += 1;
+      schedule.push({ id: nextId, ...ev });
+    }
+    if (nextId > 0) migrated = true;
+    return migrated;
+  }
   let maxId = schedule.reduce((m, ev) => Math.max(m, Number(ev.id) || 0), 0);
   for (const ev of schedule) {
     if (ev.id == null || ev.id === '') {
@@ -292,11 +302,33 @@ function migrateScheduleInPlace(schedule) {
   return migrated;
 }
 
+/** Auto-seed about section fields (education, skills, awards) when empty, using SEED_SITE data. */
+function migrateAboutInPlace(site) {
+  if (!site || !site.about || typeof site.about !== 'object') return false;
+  let migrated = false;
+  const seed = (typeof SEED_SITE !== 'undefined' && SEED_SITE.about) || {};
+
+  if (Array.isArray(site.about.education) && site.about.education.length === 0 && Array.isArray(seed.education) && seed.education.length > 0) {
+    for (const e of seed.education) site.about.education.push({ ...e });
+    migrated = true;
+  }
+  if (Array.isArray(site.about.skills) && site.about.skills.length === 0 && Array.isArray(seed.skills) && seed.skills.length > 0) {
+    for (const s of seed.skills) site.about.skills.push(s);
+    migrated = true;
+  }
+  if (Array.isArray(site.about.awards) && site.about.awards.length === 0 && Array.isArray(seed.awards) && seed.awards.length > 0) {
+    for (const a of seed.awards) site.about.awards.push(a);
+    migrated = true;
+  }
+  return migrated;
+}
+
 function readDataAndPersistMigrations() {
   const data = readData();
   let dirty = false;
   if (migrateWorksInPlace(data.works)) dirty = true;
   if (migrateScheduleInPlace(data.schedule)) dirty = true;
+  if (migrateAboutInPlace(data.site)) dirty = true;
   // Always normalize image URLs (idempotent)
   normalizeImageUrlsInSite(data.site);
   normalizeImageUrlsInWorks(data.works);
