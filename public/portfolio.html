@@ -32,12 +32,9 @@
   </div>
 
   <div class="section section-after-header">
-    <div class="filter-bar" id="mediaFilter">
-      <button class="filter-btn active" data-cat="all">All</button>
-      <button class="filter-btn" data-cat="portrait">Portraits</button>
-      <button class="filter-btn" data-cat="concert">Concerts</button>
-      <button class="filter-btn" data-cat="project">Projects</button>
-      <button class="filter-btn" data-cat="score">Scores</button>
+    <div class="gallery-toolbar">
+      <p id="galleryCount" class="gallery-count"></p>
+      <a href="/admin.html#media" class="card-link gallery-admin-link">Manage Photos</a>
     </div>
     <div class="gallery-grid" id="gallery">
       <div class="loading">Loading gallery</div>
@@ -60,17 +57,18 @@
 
   <script>
     let allMedia = [];
-    function renderGallery(cat) {
+    function renderGallery() {
       const grid = document.getElementById('gallery');
-      const filtered = cat === 'all' ? allMedia : allMedia.filter(m => m.category === cat);
-      if (filtered.length === 0) {
-        grid.innerHTML = '<p class="empty-state">No images in this category. Upload photos in the <a href="/admin.html">admin dashboard</a>.</p>';
+      const count = document.getElementById('galleryCount');
+      count.textContent = allMedia.length ? allMedia.length + ' photos' : '';
+      if (allMedia.length === 0) {
+        grid.innerHTML = '<p class="empty-state">No images uploaded yet. <a href="/admin.html#media">Open admin</a>.</p>';
         return;
       }
-      grid.innerHTML = filtered.map(m => `
-        <div class="gallery-item" onclick="openLightbox('${m.url}')">
+      grid.innerHTML = allMedia.map(m => `
+        <button class="gallery-item" onclick="openLightbox('${m.url}')" aria-label="Open ${m.originalName || 'photo'}">
           <img src="${m.url}" alt="${m.originalName || ''}" loading="lazy">
-        </div>
+        </button>
       `).join('');
     }
 
@@ -87,22 +85,14 @@
       if (e.target === this) closeLightbox();
     });
 
-    document.querySelectorAll('#mediaFilter .filter-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('#mediaFilter .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderGallery(btn.dataset.cat);
-      };
-    });
-
     async function loadGallery() {
       try {
         const res = await fetch('/api/media');
         allMedia = await res.json();
-        renderGallery('all');
+        renderGallery();
       } catch (e) {
         console.error('Failed to load gallery:', e);
-        document.getElementById('gallery').innerHTML = '<p class="empty-state">Gallery is empty. Upload images in the <a href="/admin.html">admin dashboard</a>.</p>';
+        document.getElementById('gallery').innerHTML = '<p class="empty-state">Gallery is empty. <a href="/admin.html#media">Open admin</a>.</p>';
       }
     }
     loadGallery();

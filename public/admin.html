@@ -62,6 +62,7 @@
     .toast.error{border-color:rgba(215,0,21,.35);color:var(--red)}
     .upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;background:var(--bg2)}
     .upload-zone:hover{border-color:var(--accent-dim);background:rgba(0,113,227,.04)}
+    .upload-zone.dragover{border-color:var(--accent);background:rgba(0,113,227,.07);transform:translateY(-1px)}
     .upload-zone input{display:none}
     .upload-zone p{font-size:13px;color:var(--text2)}
     .upload-zone strong{color:var(--accent)}
@@ -246,16 +247,6 @@
       <!-- ========== MEDIA ========== -->
       <div id="sec-media" class="admin-section">
         <h1>Media Manager</h1>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="uploadCat">
-            <option value="general">General</option>
-            <option value="portrait">Portrait</option>
-            <option value="concert">Concert</option>
-            <option value="project">Project</option>
-            <option value="score">Score Preview</option>
-          </select>
-        </div>
         <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
           <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
           <p>Click to upload or drag files here<br><strong>JPG, PNG, WebP</strong> — max 10MB</p>
@@ -520,7 +511,6 @@
       if (!file) return;
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('category', 'general');
       try {
         const res = await fetch('/api/upload', { method: 'POST', body: fd });
         const data = await res.json();
@@ -706,14 +696,29 @@
     // ==============================
     //  NAVIGATION
     // ==============================
+    function activateSection(section) {
+      var link = document.querySelector('.admin-nav a[data-section="' + section + '"]');
+      var panel = document.getElementById('sec-' + section);
+      if (!link || !panel) return;
+      document.querySelectorAll('.admin-nav a').forEach(n => n.classList.remove('active'));
+      link.classList.add('active');
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      panel.classList.add('active');
+      if (window.location.hash !== '#' + section) {
+        history.replaceState(null, '', '#' + section);
+      }
+    }
+
     document.querySelectorAll('.admin-nav a[data-section]').forEach(a => {
       a.addEventListener('click', e => {
         e.preventDefault();
-        document.querySelectorAll('.admin-nav a').forEach(n => n.classList.remove('active'));
-        a.classList.add('active');
-        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('sec-' + a.dataset.section).classList.add('active');
+        activateSection(a.dataset.section);
       });
+    });
+
+    window.addEventListener('hashchange', function() {
+      var section = window.location.hash.replace('#', '');
+      if (section) activateSection(section);
     });
 
     // ==============================
@@ -880,15 +885,12 @@
       if (mediaData.length === 0) grid.innerHTML = '<p style="color:var(--text3);font-size:13px;">No media uploaded yet.</p>';
     }
 
-    document.getElementById('fileInput').addEventListener('change', async function() {
-      var files = this.files;
-      var cat = document.getElementById('uploadCat').value;
+    async function uploadMediaFiles(files) {
       var status = document.getElementById('uploadStatus');
       for (var i = 0; i < files.length; i++) {
         status.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + '...';
         var fd = new FormData();
         fd.append('file', files[i]);
-        fd.append('category', cat);
         try {
           var res = await fetch('/api/upload', { method: 'POST', body: fd });
           var data = await res.json();
@@ -897,7 +899,27 @@
       }
       status.textContent = 'Upload complete!';
       var mr = await fetch('/api/media'); mediaData = await mr.json(); renderMedia(); renderStats();
+    }
+
+    document.getElementById('fileInput').addEventListener('change', async function() {
+      await uploadMediaFiles(this.files);
       this.value = '';
+    });
+
+    var uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+    uploadZone.addEventListener('dragleave', function(e) {
+      if (!uploadZone.contains(e.relatedTarget)) uploadZone.classList.remove('dragover');
+    });
+    uploadZone.addEventListener('drop', async function(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files.length) {
+        await uploadMediaFiles(e.dataTransfer.files);
+      }
     });
 
     // MEDIA PICKER
@@ -1155,7 +1177,10 @@
     // ==============================
     //  INIT
     // ==============================
-    loadAll();
+    loadAll().then(function() {
+      var section = window.location.hash.replace('#', '');
+      if (section) activateSection(section);
+    });
   </script>
 </body>
 </html>

@@ -6,3 +6,6 @@ data.json.bak
 *.log
 dist/
 .DS_Store
+
+# Local Netlify folder
+.netlify

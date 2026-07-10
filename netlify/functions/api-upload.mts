@@ -14,7 +14,7 @@ export default async (req: Request) => {
   if (contentType.includes("multipart/form-data")) {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const category = (formData.get("category") as string) || "general";
+    const category = "general";
 
     if (!file) {
       return Response.json({ error: "No file uploaded" }, { status: 400 });

@@ -1,51 +1,67 @@
 import type { Config, Context } from "@netlify/functions";
-import { db } from "../../db/index.js";
-import { scheduleEvents } from "../../db/schema.js";
-import { eq, asc } from "drizzle-orm";
+import {
+  buildScheduleFromBody,
+  loadPortfolioData,
+  nextId,
+  savePortfolioData,
+  sortSchedule,
+} from "./_shared/blob-data.mjs";
+
+function errorResponse(error: unknown) {
+  const message = error instanceof Error ? error.message : "Unexpected API error";
+  console.error(message, error);
+  return Response.json({ error: message }, { status: 500 });
+}
 
 export default async (req: Request, context: Context) => {
-  const method = req.method;
-  const id = context.params?.id;
+  const id = context.params?.id ? Number.parseInt(context.params.id, 10) : null;
 
-  if (method === "GET") {
-    const events = await db.select().from(scheduleEvents).orderBy(asc(scheduleEvents.eventDate));
-    return Response.json(events);
-  }
-
-  if (method === "POST") {
-    const body = await req.json();
-    if (!body.title || !body.eventDate) {
-      return Response.json({ error: "Title and date are required" }, { status: 400 });
+  try {
+    if (req.method === "GET") {
+      const data = await loadPortfolioData();
+      return Response.json(sortSchedule(data.schedule));
     }
-    const [created] = await db.insert(scheduleEvents).values({
-      eventDate: body.eventDate,
-      title: body.title,
-      venue: body.venue || "",
-      cityCountry: body.cityCountry || "",
-      workPerformed: body.workPerformed || "",
-      link: body.link || "",
-    }).returning();
-    return Response.json(created, { status: 201 });
-  }
 
-  if (method === "PUT" && id) {
-    const body = await req.json();
-    const updateData: Record<string, unknown> = { updatedAt: new Date() };
-    for (const f of ["eventDate", "title", "venue", "cityCountry", "workPerformed", "link"]) {
-      if (body[f] !== undefined) updateData[f] = body[f];
+    if (req.method === "POST") {
+      const body = await req.json();
+      if (!body.title || !body.eventDate) {
+        return Response.json({ error: "Title and date are required" }, { status: 400 });
+      }
+      const data = await loadPortfolioData({ forWrite: true });
+      const created = buildScheduleFromBody(body, nextId(data.schedule));
+      data.schedule.push(created);
+      await savePortfolioData(data);
+      return Response.json(created, { status: 201 });
     }
-    const [updated] = await db.update(scheduleEvents).set(updateData).where(eq(scheduleEvents.id, parseInt(id))).returning();
-    if (!updated) return Response.json({ error: "Not found" }, { status: 404 });
-    return Response.json(updated);
-  }
 
-  if (method === "DELETE" && id) {
-    const [deleted] = await db.delete(scheduleEvents).where(eq(scheduleEvents.id, parseInt(id))).returning();
-    if (!deleted) return Response.json({ error: "Not found" }, { status: 404 });
-    return Response.json({ success: true });
-  }
+    if (id == null || Number.isNaN(id)) {
+      return Response.json({ error: "Invalid id" }, { status: 400 });
+    }
 
-  return new Response("Method not allowed", { status: 405 });
+    if (req.method === "PUT") {
+      const body = await req.json();
+      const data = await loadPortfolioData({ forWrite: true });
+      const index = data.schedule.findIndex((event) => Number(event.id) === id);
+      if (index === -1) return Response.json({ error: "Not found" }, { status: 404 });
+      const updated = buildScheduleFromBody({ ...data.schedule[index], ...body }, id);
+      data.schedule[index] = updated;
+      await savePortfolioData(data);
+      return Response.json(updated);
+    }
+
+    if (req.method === "DELETE") {
+      const data = await loadPortfolioData({ forWrite: true });
+      const index = data.schedule.findIndex((event) => Number(event.id) === id);
+      if (index === -1) return Response.json({ error: "Not found" }, { status: 404 });
+      data.schedule.splice(index, 1);
+      await savePortfolioData(data);
+      return Response.json({ success: true });
+    }
+
+    return new Response("Method not allowed", { status: 405 });
+  } catch (error) {
+    return errorResponse(error);
+  }
 };
 
 export const config: Config = {

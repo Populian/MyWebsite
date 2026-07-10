@@ -115,7 +115,7 @@
       keys.forEach(function(key) {
         var events = groups[key];
         var label = getMonthLabel(events[0].event_date || events[0].eventDate);
-        html += '<div class="timeline-month">' + label + '</div>';
+        html += '<div class="timeline-month"><span>' + label + '</span></div>';
         events.forEach(function(e) {
           var dateStr = formatDate(e.event_date || e.eventDate);
           var isPastEvent = isPast(e.event_date || e.eventDate);
@@ -123,7 +123,7 @@
           html += '<div class="timeline-date">';
           html += '<span class="timeline-date-badge">' + dateStr + '</span>';
           html += '</div>';
-          html += '<div>';
+          html += '<div class="timeline-content">';
           html += '<div class="timeline-title">' + e.title + '</div>';
           html += '<div class="timeline-details">';
           if (e.venue) html += e.venue;
