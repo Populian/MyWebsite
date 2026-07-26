@@ -9,3 +9,9 @@
   from = "/"
   to = "/home.html"
   status = 200
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"

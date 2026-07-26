@@ -419,7 +419,7 @@ h1, h2, h3, h4, h5 {
 .hero-photo-wrap {
   display: none;
   flex: 1 1 clamp(500px, 300%, 1200px);
-  max-width: 1200px;
+  max-width: 1220px;
   align-items: center;
   justify-content: center;
 }
@@ -429,7 +429,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero-photo-frame {
-  width: 260%;
+  width: 264%;
   padding: clamp(0.5rem, 1.2vw, 0.75rem);
   border-radius: clamp(18px, 2.2vw, 24px);
   background: var(--hero-violet-mat);
@@ -444,7 +444,7 @@ h1, h2, h3, h4, h5 {
   width: 100%;
   aspect-ratio: 16 / 10;
   min-height: 220px;
-  max-height: min(58vh, 580px);
+  max-height: min(59vh, 590px);
   border-radius: clamp(12px, 1.6vw, 18px);
   background-size: contain;
   background-position: center;
@@ -859,7 +859,52 @@ h1, h2, h3, h4, h5 {
   width: 100%;
   padding: 44px;
   position: relative;
+  min-width: 0;
+  overflow-x: hidden;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+}
+
+#modalBody,
+.work-modal-body,
+.work-modal-section {
+  min-width: 0;
+}
+
+.work-modal-title,
+.work-modal-copy,
+.work-modal-meta {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
+
+.work-modal-title {
+  font-size: clamp(1.55rem, 5vw, 2rem);
+  margin-bottom: 4px;
+}
+
+.work-modal-description {
+  margin-top: 16px;
+}
+
+.work-modal-copy {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.8;
+}
+
+.work-modal-section {
+  margin-top: 20px;
+}
+
+.work-modal-program-note {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.work-modal-meta {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
 }
 
 .modal-close {
@@ -1506,7 +1551,7 @@ h1, h2, h3, h4, h5 {
 
   .hero-photo-wrap {
     flex: 1 1 auto;
-    max-width: min(200%, 760px);
+    max-width: min(204%, 775px);
     width: 100%;
   }
 

@@ -136,21 +136,23 @@
       if (!w) return;
       const embedUrl = getYouTubeEmbedUrl(w.youtube_url);
       document.getElementById('modalBody').innerHTML = `
+        <article class="work-modal-body">
         ${w.cover_image ? `<img style="width:100%;border-radius:6px;margin-bottom:24px;" src="${w.cover_image}" alt="${w.title}">` : ''}
         <p class="card-category">${w.category || ''}</p>
-        <h2 style="font-size:2rem;margin-bottom:4px;">${w.title}</h2>
+        <h2 class="work-modal-title">${w.title}</h2>
         ${w.year ? `<p class="card-year">${w.year}</p>` : ''}
         ${w.medium ? `<p class="card-meta" style="margin-top:12px;">${w.medium}</p>` : ''}
-        <p style="margin-top:16px;font-size:0.92rem;color:var(--text-secondary);line-height:1.8;">${w.description || ''}</p>
-        ${w.program_note ? `<div style="margin-top:20px;"><p class="section-label">Program Note</p><p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;font-style:italic;">${w.program_note}</p></div>` : ''}
-        ${w.premiere_info ? `<div style="margin-top:16px;"><p class="section-label">Premiere</p><p style="font-size:0.88rem;color:var(--text-secondary);">${w.premiere_info}</p></div>` : ''}
-        ${w.festival_selections ? `<div style="margin-top:16px;"><p class="section-label">Festivals &amp; Selections</p><p style="font-size:0.88rem;color:var(--text-secondary);">${w.festival_selections}</p></div>` : ''}
+        <p class="work-modal-copy work-modal-description">${w.description || ''}</p>
+        ${w.program_note ? `<div class="work-modal-section"><p class="section-label">Program Note</p><p class="work-modal-copy work-modal-program-note">${w.program_note}</p></div>` : ''}
+        ${w.premiere_info ? `<div class="work-modal-section"><p class="section-label">Premiere</p><p class="work-modal-meta">${w.premiere_info}</p></div>` : ''}
+        ${w.festival_selections ? `<div class="work-modal-section"><p class="section-label">Festivals &amp; Selections</p><p class="work-modal-meta">${w.festival_selections}</p></div>` : ''}
         ${embedUrl ? `<div class="video-embed" style="margin-top:24px;"><iframe src="${embedUrl}" allowfullscreen></iframe></div>` : ''}
         ${w.soundcloud_url ? `<div style="margin-top:16px;"><a href="${w.soundcloud_url}" target="_blank" class="btn btn-sm">Listen on SoundCloud</a></div>` : ''}
         ${w.audio_url ? `<div style="margin-top:16px;"><audio controls style="width:100%;"><source src="${w.audio_url}"></audio></div>` : ''}
         <div class="card-actions" style="margin-top:24px;">
           ${w.score_pdf_url ? `<a href="${w.score_pdf_url}" target="_blank" class="btn btn-sm">View Score</a>` : ''}
         </div>
+        </article>
       `;
       document.getElementById('workModal').classList.add('active');
       document.body.style.overflow = 'hidden';

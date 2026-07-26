@@ -169,7 +169,7 @@
         document.getElementById('heroPhotoLayer').style.backgroundImage = '';
         document.getElementById('heroSection').classList.remove('hero--has-photo');
         homeNotice.hidden = false;
-        homeNotice.innerHTML = 'Content could not be loaded. If you are setting up the site, use the <a href="/admin.html">admin dashboard</a>.';
+        homeNotice.textContent = 'Content could not be loaded. Please try again later.';
       }
     }
     loadHome();

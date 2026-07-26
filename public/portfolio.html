@@ -34,7 +34,6 @@
   <div class="section section-after-header">
     <div class="gallery-toolbar">
       <p id="galleryCount" class="gallery-count"></p>
-      <a href="/admin.html#media" class="card-link gallery-admin-link">Manage Photos</a>
     </div>
     <div class="gallery-grid" id="gallery">
       <div class="loading">Loading gallery</div>
@@ -62,7 +61,7 @@
       const count = document.getElementById('galleryCount');
       count.textContent = allMedia.length ? allMedia.length + ' photos' : '';
       if (allMedia.length === 0) {
-        grid.innerHTML = '<p class="empty-state">No images uploaded yet. <a href="/admin.html#media">Open admin</a>.</p>';
+        grid.innerHTML = '<p class="empty-state">No images uploaded yet.</p>';
         return;
       }
       grid.innerHTML = allMedia.map(m => `
@@ -92,7 +91,7 @@
         renderGallery();
       } catch (e) {
         console.error('Failed to load gallery:', e);
-        document.getElementById('gallery').innerHTML = '<p class="empty-state">Gallery is empty. <a href="/admin.html#media">Open admin</a>.</p>';
+        document.getElementById('gallery').innerHTML = '<p class="empty-state">Gallery is temporarily unavailable.</p>';
       }
     }
     loadGallery();
