@@ -453,7 +453,7 @@ app.post('/api/site', (req, res) => {
 app.get('/api/schedule', (req, res) => {
   const data = readDataAndPersistMigrations();
   res.json(
-    [...data.schedule].sort((a, b) => String(a.eventDate || '').localeCompare(String(b.eventDate || '')))
+    [...data.schedule].sort((a, b) => String(b.eventDate || '').localeCompare(String(a.eventDate || '')))
   );
 });
 

@@ -244,7 +244,7 @@ export function sortWorks(items: JsonRecord[]) {
 }
 
 export function sortSchedule(items: JsonRecord[]) {
-  return [...items].sort((a, b) => String(a.eventDate || "").localeCompare(String(b.eventDate || "")));
+  return [...items].sort((a, b) => String(b.eventDate || "").localeCompare(String(a.eventDate || "")));
 }
 
 export function nextId(items: JsonRecord[]) {

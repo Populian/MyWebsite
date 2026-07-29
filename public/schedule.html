@@ -34,8 +34,8 @@
   <div class="section section-after-header">
     <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:36px;align-items:center;">
       <div style="display:flex;gap:4px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.06);border-radius:980px;padding:3px;">
-        <button class="filter-btn" id="schedToggleAll" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('all')">All Events</button>
-        <button class="filter-btn active" id="schedToggleUpcoming" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('upcoming')">Upcoming</button>
+        <button class="filter-btn active" id="schedToggleAll" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('all')">All Events</button>
+        <button class="filter-btn" id="schedToggleUpcoming" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('upcoming')">Upcoming</button>
         <button class="filter-btn" id="schedTogglePast" style="padding:8px 18px;font-size:0.72rem;" onclick="setSchedFilter('past')">Past</button>
       </div>
     </div>
@@ -53,7 +53,7 @@
 
   <script>
     var allEvents = [];
-    var schedFilter = 'upcoming';
+    var schedFilter = 'all';
 
     function formatDate(dateStr) {
       var d = new Date(dateStr);
@@ -110,10 +110,12 @@
         groups[key].push(e);
       });
 
-      var keys = Object.keys(groups).sort();
+      var keys = Object.keys(groups).sort().reverse();
       var html = '';
       keys.forEach(function(key) {
-        var events = groups[key];
+        var events = groups[key].sort(function(a, b) {
+          return String(b.event_date || b.eventDate || '').localeCompare(String(a.event_date || a.eventDate || ''));
+        });
         var label = getMonthLabel(events[0].event_date || events[0].eventDate);
         html += '<div class="timeline-month"><span>' + label + '</span></div>';
         events.forEach(function(e) {
