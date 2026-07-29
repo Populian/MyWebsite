@@ -27,20 +27,33 @@
 
   <section class="hero hero--home" id="heroSection">
     <div class="hero-bg hero-parallax-layer" data-parallax-speed="-0.08" aria-hidden="true"></div>
+    <span class="hero-supergraphic" aria-hidden="true">P</span>
     <div class="hero-motion hero-motion--line" aria-hidden="true"></div>
     <div class="hero-motion hero-motion--plane" aria-hidden="true"></div>
+    <div class="hero-motion hero-motion--rule" aria-hidden="true"></div>
+    <div class="hero-motion hero-motion--block" aria-hidden="true"></div>
     <div class="hero-inner">
       <div class="hero-photo-wrap hero-parallax-layer" id="heroPhotoWrap" data-parallax-speed="-0.04" hidden aria-hidden="true">
         <div class="hero-photo-frame">
           <div class="hero-photo" id="heroPhotoLayer" role="img" aria-label=""></div>
+          <div class="hero-photo-caption" aria-hidden="true">
+            <span>SONIC STUDIES</span>
+            <span>01</span>
+          </div>
         </div>
       </div>
       <div class="hero-content hero-parallax-layer" data-parallax-speed="0.06" id="heroContent">
+        <p class="hero-kicker">COMPOSER / SOUND ARTIST</p>
         <h1 class="hero-name" id="heroName">Populian</h1>
         <p class="hero-alias" id="heroAlias">Faming Qin 秦发鸣</p>
         <p class="hero-subtitle" id="heroSubtitle">Electroacoustic Composer · Interactive Media Artist · Music Technology Researcher</p>
         <div class="hero-divider" aria-hidden="true"></div>
         <p class="hero-statement" id="heroStatement">His work focuses on electroacoustic composition, real-time interaction, algorithmic sound systems, and the expressive relationship between physical gesture and digital mediation.</p>
+      </div>
+    </div>
+    <div class="hero-rail" aria-hidden="true">
+      <div class="hero-rail-track">
+        <span>COMPOSITION</span><i></i><span>INTERACTION</span><i></i><span>ALGORITHMIC SOUND</span><i></i><span>COMPOSITION</span><i></i><span>INTERACTION</span><i></i><span>ALGORITHMIC SOUND</span><i></i>
       </div>
     </div>
     <div class="hero-scroll-indicator" onclick="document.getElementById('homeFeaturedSection').scrollIntoView({behavior:'smooth'})" aria-hidden="true">
@@ -198,6 +211,22 @@
           });
           ticking = true;
         }
+      });
+    })();
+
+    (function initHeroPointerMotion() {
+      var hero = document.getElementById('heroSection');
+      if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      hero.addEventListener('pointermove', function(event) {
+        var rect = hero.getBoundingClientRect();
+        var x = (event.clientX - rect.left) / rect.width - 0.5;
+        var y = (event.clientY - rect.top) / rect.height - 0.5;
+        hero.style.setProperty('--hero-pointer-x', (x * 10).toFixed(2) + 'px');
+        hero.style.setProperty('--hero-pointer-y', (y * 8).toFixed(2) + 'px');
+      });
+      hero.addEventListener('pointerleave', function() {
+        hero.style.setProperty('--hero-pointer-x', '0px');
+        hero.style.setProperty('--hero-pointer-y', '0px');
       });
     })();
   </script>
