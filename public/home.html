@@ -56,24 +56,6 @@
         <span>COMPOSITION</span><i></i><span>INTERACTION</span><i></i><span>ALGORITHMIC SOUND</span><i></i><span>COMPOSITION</span><i></i><span>INTERACTION</span><i></i><span>ALGORITHMIC SOUND</span><i></i>
       </div>
     </div>
-    <div class="hero-scroll-indicator" onclick="document.getElementById('homeFeaturedSection').scrollIntoView({behavior:'smooth'})" aria-hidden="true">
-      <div class="mouse"></div>
-      <span class="label">Scroll</span>
-    </div>
-  </section>
-
-  <section id="homeFeaturedSection" class="section home-after-hero" hidden>
-    <p class="section-label">Selected Works</p>
-    <h2 class="section-title">Featured Compositions</h2>
-    <div class="section-divider"></div>
-    <div class="card-grid" id="featuredWorks"></div>
-  </section>
-
-  <section id="homeAwardsSection" class="section home-after-hero" hidden>
-    <p class="section-label">Recognition</p>
-    <h2 class="section-title">Awards &amp; Selections</h2>
-    <div class="section-divider"></div>
-    <div id="awardsGrid" class="card-grid home-awards-grid"></div>
   </section>
 
   <p id="homeNotice" class="home-notice" hidden></p>
@@ -87,24 +69,11 @@
 
   <script>
     async function loadHome() {
-      const featuredSection = document.getElementById('homeFeaturedSection');
-      const awardsSection = document.getElementById('homeAwardsSection');
       const homeNotice = document.getElementById('homeNotice');
-      const container = document.getElementById('featuredWorks');
-      const awardsGrid = document.getElementById('awardsGrid');
-
-      function hideBelowFold() {
-        featuredSection.hidden = true;
-        awardsSection.hidden = true;
-      }
 
       try {
-        const [siteRes, worksRes] = await Promise.all([
-          fetch('/api/site'),
-          fetch('/api/works')
-        ]);
+        const siteRes = await fetch('/api/site');
         const site = await siteRes.json();
-        const works = await worksRes.json();
 
         homeNotice.hidden = true;
         homeNotice.textContent = '';
@@ -140,46 +109,8 @@
           heroSection.classList.remove('hero--has-photo');
         }
 
-        const featured = works.filter(w => w.featured);
-        if (featured.length === 0) {
-          featuredSection.hidden = true;
-          container.innerHTML = '';
-        } else {
-          featuredSection.hidden = false;
-          container.innerHTML = featured.map(w => `
-            <div class="card">
-              ${w.cover_image ? `<img class="card-image" src="${w.cover_image}" alt="${w.title}">` : ''}
-              <span class="card-featured-badge">Featured</span>
-              <p class="card-category">${w.category || ''}</p>
-              <h3 class="card-title">${w.title}${w.year ? ` (${w.year})` : ''}</h3>
-              <p class="card-desc">${w.description || ''}</p>
-              ${w.medium ? `<p class="card-meta">${w.medium}</p>` : ''}
-              ${w.festival_selections ? `<p class="card-meta">${w.festival_selections}</p>` : ''}
-              <div class="card-actions">
-                <a href="/works.html" class="card-link">View Details</a>
-                ${w.youtube_url ? `<a href="${w.youtube_url}" target="_blank" class="card-link">Watch</a>` : ''}
-              </div>
-            </div>
-          `).join('');
-        }
-
-        const awards = (site.about || {}).awards || [];
-        if (awards.length === 0) {
-          awardsSection.hidden = true;
-          awardsGrid.innerHTML = '';
-        } else {
-          awardsSection.hidden = false;
-          awardsGrid.innerHTML = awards.map(a => `
-            <div class="card home-award-card">
-              <p class="home-award-text">${a}</p>
-            </div>
-          `).join('');
-        }
       } catch (e) {
         console.error('Failed to load homepage data:', e);
-        hideBelowFold();
-        container.innerHTML = '';
-        awardsGrid.innerHTML = '';
         document.getElementById('heroPhotoWrap').hidden = true;
         document.getElementById('heroPhotoLayer').style.backgroundImage = '';
         document.getElementById('heroSection').classList.remove('hero--has-photo');

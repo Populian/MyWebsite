@@ -718,7 +718,10 @@ h1, h2, h3, h4, h5 {
 .hero--home {
   --hero-pointer-x: 0px;
   --hero-pointer-y: 0px;
-  background: #f5f4f3;
+  --home-paper: #f7f7f6;
+  --home-ink: #2f2f31;
+  --home-accent: #b9b9bc;
+  background: var(--home-paper);
 }
 
 .hero.hero--home::before,
@@ -736,7 +739,7 @@ h1, h2, h3, h4, h5 {
   height: min(72vh, 760px);
   top: 8%;
   right: -11%;
-  background: #171719;
+  background: var(--home-ink);
   clip-path: polygon(30% 0, 100% 0, 100% 84%, 0 100%);
   border-radius: 0;
 }
@@ -746,7 +749,7 @@ h1, h2, h3, h4, h5 {
   height: min(42vw, 440px);
   bottom: -12%;
   left: -8%;
-  background: #d6422d;
+  background: var(--home-accent);
   clip-path: polygon(0 0, 100% 28%, 78% 100%, 0 76%);
   border-radius: 0;
 }
@@ -767,7 +770,7 @@ h1, h2, h3, h4, h5 {
   inset: 14% 6% auto auto;
   width: min(22vw, 300px);
   height: min(44vw, 580px);
-  border: 1px solid rgba(23, 23, 25, 0.16);
+  border: 1px solid rgba(74, 70, 86, 0.16);
   border-left: 0;
   border-bottom: 0;
   transform: skewY(-16deg);
@@ -789,10 +792,10 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero--home .hero-photo-frame {
-  border: 1px solid #171719;
+  border: 1px solid var(--home-ink);
   border-radius: 0;
-  background: #171719;
-  box-shadow: 18px 18px 0 #d6422d, 32px 32px 0 rgba(23, 23, 25, 0.14);
+  background: var(--home-ink);
+  box-shadow: 16px 16px 0 var(--home-accent), 28px 28px 0 rgba(47, 47, 49, 0.12);
   transform: translate3d(var(--hero-pointer-x), var(--hero-pointer-y), 0) rotate(-2deg);
   transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -801,21 +804,21 @@ h1, h2, h3, h4, h5 {
   inset: auto 0 0 auto;
   width: 24%;
   height: 3px;
-  background: #d6422d;
+  background: var(--home-accent);
 }
 
 .hero--home .hero-photo {
   aspect-ratio: 4 / 3;
   min-height: 360px;
   border-radius: 0;
-  filter: grayscale(0.18) contrast(1.16) saturate(0.92);
+  filter: grayscale(0.1) contrast(1.1) saturate(0.95);
 }
 
 .hero--home .hero-content {
   max-width: 35rem;
   padding: clamp(1.5rem, 3vw, 2.25rem) 0 clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 2.6vw, 2rem);
   border: 0;
-  border-left: 2px solid #171719;
+  border-left: 2px solid var(--home-ink);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -831,12 +834,12 @@ h1, h2, h3, h4, h5 {
   height: 2px;
   border: 0;
   border-radius: 0;
-  background: #d6422d;
+  background: var(--home-accent);
 }
 
 .hero-kicker {
   margin: 0 0 1.1rem;
-  color: #d6422d;
+  color: var(--home-accent);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.17em;
@@ -851,7 +854,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero--home .hero-alias {
-  color: #171719;
+  color: var(--home-ink);
 }
 
 .hero--home .hero-subtitle {
@@ -859,11 +862,11 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero--home .hero-statement {
-  color: #171719;
+  color: var(--home-ink);
 }
 
 .hero--home .hero-divider {
-  background: #d6422d;
+  background: var(--home-accent);
   box-shadow: none;
 }
 
@@ -872,7 +875,7 @@ h1, h2, h3, h4, h5 {
   top: 3%;
   left: max(3vw, 22px);
   z-index: 1;
-  color: rgba(23, 23, 25, 0.07);
+  color: rgba(47, 47, 49, 0.06);
   font-family: var(--font-heading);
   font-size: min(52vw, 720px);
   font-weight: 700;
@@ -887,7 +890,7 @@ h1, h2, h3, h4, h5 {
   left: 7%;
   width: 1px;
   height: 55%;
-  background: #171719;
+  background: var(--home-ink);
   opacity: 0.14;
 }
 
@@ -896,7 +899,7 @@ h1, h2, h3, h4, h5 {
   right: 39%;
   width: 30px;
   height: 30px;
-  background: #d6422d;
+  background: var(--home-accent);
   animation: heroBlockDrift 11s ease-in-out infinite;
 }
 
@@ -908,8 +911,8 @@ h1, h2, h3, h4, h5 {
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 0.85rem;
-  color: #f5f4f3;
-  background: #171719;
+  color: var(--home-paper);
+  background: var(--home-ink);
   font-size: 0.59rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -923,9 +926,9 @@ h1, h2, h3, h4, h5 {
   z-index: 4;
   overflow: hidden;
   height: 2.7rem;
-  color: #f5f4f3;
-  background: #171719;
-  border-top: 3px solid #d6422d;
+  color: var(--home-paper);
+  background: var(--home-ink);
+  border-top: 3px solid var(--home-accent);
 }
 
 .hero-rail-track {
@@ -949,41 +952,8 @@ h1, h2, h3, h4, h5 {
   width: 6px;
   height: 6px;
   margin: 0 1.85rem;
-  background: #d6422d;
+  background: var(--home-accent);
   transform: rotate(45deg);
-}
-
-/* Homepage: secondary content */
-.home-after-hero {
-  padding-top: clamp(3.5rem, 8vw, 5.5rem);
-  padding-bottom: clamp(3rem, 7vw, 4.5rem);
-  margin-top: clamp(3rem, 8vw, 6rem);
-  max-width: min(var(--max-w), calc(100% - 48px));
-  border-radius: 28px;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.85) 0%, rgba(250, 250, 252, 0.92) 100%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 20px 50px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.home-awards-grid {
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 36px;
-}
-
-.home-award-card {
-  padding: 28px 32px !important;
-  border-left: 3px solid rgba(0, 0, 0, 0.08);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 248, 250, 0.95) 100%);
-}
-
-.home-award-text {
-  font-size: 0.92rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
 }
 
 .home-notice {
@@ -2053,7 +2023,7 @@ h1, h2, h3, h4, h5 {
   }
 
   .hero--home .hero-photo-frame {
-    box-shadow: 12px 12px 0 #d6422d, 21px 21px 0 rgba(23, 23, 25, 0.14);
+    box-shadow: 12px 12px 0 var(--home-accent), 21px 21px 0 rgba(47, 47, 49, 0.12);
   }
 
   .hero--home .hero-photo {
@@ -2081,15 +2051,6 @@ h1, h2, h3, h4, h5 {
   .hero-rail-track span { font-size: 0.58rem; }
 
   .hero-rail-track i { margin: 0 1.2rem; }
-
-  .home-after-hero {
-    margin-left: 16px;
-    margin-right: 16px;
-    margin-top: clamp(3.5rem, 12vw, 7rem);
-    border-radius: 22px;
-    padding-left: 22px;
-    padding-right: 22px;
-  }
 
   .works-search {
     width: 100%;
@@ -2302,15 +2263,6 @@ h1, h2, h3, h4, h5 {
 
   .footer-name {
     font-size: 0.92rem;
-  }
-
-  .home-after-hero {
-    margin-left: 12px;
-    margin-right: 12px;
-    border-radius: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-top: clamp(2.5rem, 10vw, 5rem);
   }
 
   .about-portrait {
