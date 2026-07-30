@@ -718,9 +718,9 @@ h1, h2, h3, h4, h5 {
 .hero--home {
   --hero-pointer-x: 0px;
   --hero-pointer-y: 0px;
-  --home-paper: #f7f7f6;
-  --home-ink: #2f2f31;
-  --home-accent: #b9b9bc;
+  --home-paper: #f5f5f7;
+  --home-ink: #3a3a3c;
+  --home-accent: #d1d1d6;
   background: var(--home-paper);
 }
 
@@ -735,21 +735,21 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero.hero--home::before {
-  width: min(46vw, 620px);
-  height: min(72vh, 760px);
-  top: 8%;
-  right: -11%;
-  background: var(--home-ink);
-  clip-path: polygon(30% 0, 100% 0, 100% 84%, 0 100%);
+  width: min(40vw, 560px);
+  height: min(54vh, 560px);
+  top: 12%;
+  right: -14%;
+  background: #e5e5ea;
+  clip-path: polygon(20% 0, 100% 0, 100% 76%, 0 100%);
   border-radius: 0;
 }
 
 .hero.hero--home::after {
-  width: min(28vw, 340px);
-  height: min(42vw, 440px);
-  bottom: -12%;
+  width: min(22vw, 260px);
+  height: min(32vw, 340px);
+  bottom: -10%;
   left: -8%;
-  background: var(--home-accent);
+  background: #d1d1d6;
   clip-path: polygon(0 0, 100% 28%, 78% 100%, 0 76%);
   border-radius: 0;
 }
@@ -770,7 +770,7 @@ h1, h2, h3, h4, h5 {
   inset: 14% 6% auto auto;
   width: min(22vw, 300px);
   height: min(44vw, 580px);
-  border: 1px solid rgba(74, 70, 86, 0.16);
+  border: 1px solid rgba(58, 58, 60, 0.14);
   border-left: 0;
   border-bottom: 0;
   transform: skewY(-16deg);
@@ -792,33 +792,31 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero--home .hero-photo-frame {
-  border: 1px solid var(--home-ink);
-  border-radius: 0;
-  background: var(--home-ink);
-  box-shadow: 16px 16px 0 var(--home-accent), 28px 28px 0 rgba(47, 47, 49, 0.12);
-  transform: translate3d(var(--hero-pointer-x), var(--hero-pointer-y), 0) rotate(-2deg);
+  padding: clamp(0.45rem, 1vw, 0.7rem);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 12px 14px 0 #d1d1d6, 0 22px 44px rgba(58, 58, 60, 0.12);
+  transform: translate3d(var(--hero-pointer-x), var(--hero-pointer-y), 0);
   transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .hero--home .hero-photo-frame::after {
-  inset: auto 0 0 auto;
-  width: 24%;
-  height: 3px;
-  background: var(--home-accent);
+  display: none;
 }
 
 .hero--home .hero-photo {
   aspect-ratio: 4 / 3;
   min-height: 360px;
-  border-radius: 0;
-  filter: grayscale(0.1) contrast(1.1) saturate(0.95);
+  border-radius: 12px;
+  filter: contrast(1.04) saturate(1.02);
 }
 
 .hero--home .hero-content {
   max-width: 35rem;
   padding: clamp(1.5rem, 3vw, 2.25rem) 0 clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 2.6vw, 2rem);
   border: 0;
-  border-left: 2px solid var(--home-ink);
+  border-left: 2px solid #8e8e93;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -858,7 +856,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .hero--home .hero-subtitle {
-  color: #55555d;
+  color: #6e6e73;
 }
 
 .hero--home .hero-statement {
@@ -875,7 +873,7 @@ h1, h2, h3, h4, h5 {
   top: 3%;
   left: max(3vw, 22px);
   z-index: 1;
-  color: rgba(47, 47, 49, 0.06);
+  color: rgba(58, 58, 60, 0.045);
   font-family: var(--font-heading);
   font-size: min(52vw, 720px);
   font-weight: 700;
@@ -890,8 +888,8 @@ h1, h2, h3, h4, h5 {
   left: 7%;
   width: 1px;
   height: 55%;
-  background: var(--home-ink);
-  opacity: 0.14;
+  background: #8e8e93;
+  opacity: 0.22;
 }
 
 .hero-motion--block {
@@ -899,7 +897,7 @@ h1, h2, h3, h4, h5 {
   right: 39%;
   width: 30px;
   height: 30px;
-  background: var(--home-accent);
+  background: #d1d1d6;
   animation: heroBlockDrift 11s ease-in-out infinite;
 }
 
@@ -911,8 +909,8 @@ h1, h2, h3, h4, h5 {
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 0.85rem;
-  color: var(--home-paper);
-  background: var(--home-ink);
+  color: #f5f5f7;
+  background: rgba(58, 58, 60, 0.92);
   font-size: 0.59rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -926,9 +924,9 @@ h1, h2, h3, h4, h5 {
   z-index: 4;
   overflow: hidden;
   height: 2.7rem;
-  color: var(--home-paper);
-  background: var(--home-ink);
-  border-top: 3px solid var(--home-accent);
+  color: #f5f5f7;
+  background: #3a3a3c;
+  border-top: 3px solid #d1d1d6;
 }
 
 .hero-rail-track {
